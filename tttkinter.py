@@ -1,9 +1,6 @@
 import tkinter as tk
 from tkinter import ttk
 from PIL import ImageTk,Image  
-import multiprocessing
-import threading
-import hand_gesture_classifier
 
 
 
@@ -16,7 +13,6 @@ def toggle_image(button):
     button.config(image=new_image)
     button.current_image = new_image
 
-next_room = 1
 def switch_to_room1(room1_btn, room2_btn):
     global next_room
     room1_frame.tkraise()
@@ -509,16 +505,7 @@ room2_img_2_4.pack( expand=True)
 room2_img_2_4.configure(background="white")
 room2_frame_2_4.grid(row=1,column=4,sticky="nsew", padx=5,pady=5)
 
-# while True:
-#    data = hand_gesture_classifier.classifier_gesture()
-#    print(data)
-#    window.update()
-window.mainloop()
 
-
-# import threading
-# if __name__ == '__main__':
-#     hand_gesture_thread = threading.Thread(target=hand_gesture_classifier.classifier_gesture())
-#     hand_gesture_thread.start()
-#     window.mainloop()
+if __name__ == '__main__':
+    window.mainloop()
     

@@ -1,2 +1,1 @@
-    cap.release()
-    cv.destroyAllWindows()
+process2 = multiprocessing.Process(target=subprocess.call, args=(["python", "get_hand_gesture.py"],))

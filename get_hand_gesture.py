@@ -9,9 +9,12 @@ import tensorflow as tf
 import numpy as np
 import mediapipe as mp
 
+import multiprocessing
 
 def classifier_gesture():
     hand_sign_id = 0
+    queue = multiprocessing.Queue()
+
     cap = cv.VideoCapture(0)
     prev_time = 0
 
@@ -33,7 +36,6 @@ def classifier_gesture():
         ]
 
     while True:
-        
         # if user press ESC key, exit
         key = cv.waitKey(1)
         if key == 27:  # ESC
@@ -48,9 +50,7 @@ def classifier_gesture():
         # image.flags.writeable = False
         # get the result from mediapipe
         results = hands.process(image)
-
         # image.flags.writeable = True
-
         #calculate fps
         curr_time = cv.getTickCount()
         time_taken = (curr_time - prev_time) / cv.getTickFrequency()
@@ -82,12 +82,12 @@ def classifier_gesture():
                     keypoint_classifier_labels,
                     hand_sign_id
                 )
+
+                queue.put(hand_sign_id)
+                print(str(queue.get()))
                 # print(keypoint_classifier_labels[hand_sign_id])
                 # print(hand_sign_id)
         
-        
-
-
         # draw fps on frame
         image = draw_fps(image, fps)
 
@@ -161,7 +161,7 @@ def key_point_classifier(landmark_list, model_path='keypoint_classifier.tflite',
     result = interpreter.get_tensor(output_details_tensor_index)
     # find the maximum probability class
     max_result_probability = np.max(np.squeeze(result))
-    print(max_result_probability)
+    #print(max_result_probability)
     if max_result_probability > 0.9:
         result_index = np.argmax(np.squeeze(result))
     # if all probability for classes is less than 0.9, output None
