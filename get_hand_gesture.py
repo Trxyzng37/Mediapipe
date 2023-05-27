@@ -8,12 +8,10 @@ import cv2 as cv
 import tensorflow as tf
 import numpy as np
 import mediapipe as mp
+import time
 
-import multiprocessing
-
-def classifier_gesture():
+def classifier_gesture(queue):
     hand_sign_id = 0
-    queue = multiprocessing.Queue()
 
     cap = cv.VideoCapture(0)
     prev_time = 0
@@ -34,6 +32,21 @@ def classifier_gesture():
         keypoint_classifier_labels = [
             row[0] for row in keypoint_classifier_labels
         ]
+
+    prev_occurence = {
+        0: 0,
+        1: 0,
+        2: 0,
+        3: 0,
+        4: 0,
+        5: 0,
+        6: 0,
+        7: 0,
+        8: 0,
+        9: 0,
+        10: 0,
+        11: 0
+    }
 
     while True:
         # if user press ESC key, exit
@@ -83,11 +96,22 @@ def classifier_gesture():
                     hand_sign_id
                 )
 
-                queue.put(hand_sign_id)
-                print(str(queue.get()))
-                # print(keypoint_classifier_labels[hand_sign_id])
-                # print(hand_sign_id)
-        
+                if queue is None:
+                    pass
+                else:
+                    if prev_occurence[hand_sign_id] == 0:
+                        prev_occurence[hand_sign_id] = int(time.time())
+                        queue.put(hand_sign_id)
+                        print("put to queue: "+str(hand_sign_id))
+                    else:
+                        if time.time() - prev_occurence[hand_sign_id] >= 3:
+                            queue.put(hand_sign_id)
+                            print("put to queue: "+str(hand_sign_id))
+                            prev_occurence[hand_sign_id] = time.time()
+                        else:
+                            pass
+
+
         # draw fps on frame
         image = draw_fps(image, fps)
 
