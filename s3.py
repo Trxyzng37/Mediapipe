@@ -14,19 +14,83 @@ import cv2 as cv
 import tensorflow as tf
 import numpy as np
 import mediapipe as mp
+import paho.mqtt.client as mqtt
+
+
+
 
 def mainx(queue):
+    received_message = {}
+
+    def on_connect(client, userdata, flags, rc):
+        if rc == 0:
+            print("Connection successful")
+        else:
+            print("Connection failed")
+
+    def on_message(client, userdata, message):
+        global received_message
+        msg = str(message.payload.decode("utf-8"))
+        msg_dict = eval(msg)
+        received_message = msg_dict
+        print("Get from mqtt: " + msg)
+        process_received_message(received_message, device_status, devices_btn)
+
+    def connect_to_mqtt():
+        broker_address = "broker.hivemq.com"         #address of cloud mqtt server 
+        port = 1883                                  #port to connect to mqtt server
+        user = "test"                                #user name to connect to server
+        password = "test"                            #password to connect to server
+        topic = "rasp4_to_esp32"                               #main topic
+        client = mqtt.Client(client_id="hoacchitrung", clean_session=True, userdata=None, protocol=mqtt.MQTTv311, transport="tcp") #create new client
+        client.username_pw_set(user,password)     #user and password for connect
+        print("Connecting to broker...")          #print to console
+        client.connect(broker_address, port, 5)   #connect to broker with keep alive time = 5s
+        client.on_connect = on_connect
+        client.subscribe("esp32_to_rasp4", qos=2)
+        client.on_message = on_message
+        client.loop_start()
+        return client
+    
     #define default values
-    cbbox_value = ("One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten","Eleven","Twelve")
+    cbbox_value = ("No use","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten","Eleven","Twelve")
+    device_status = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0}
+    prev_device_status = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0}
+
+    mqtt_client = connect_to_mqtt()
 
     def toggle_image(button):
-        current_image = button.current_image
-        if current_image == bulb_off:
-            new_image = bulb_on
-        if current_image == bulb_on:
-            new_image = bulb_off
-        button.config(image=new_image)
-        button.current_image = new_image
+        current_img = button.current_image
+        btn_index = devices_btn.index(button)
+        #if off then on
+        if current_img in device_img_off:
+            img_index = device_img_off.index(current_img)
+            new_image = device_img_on[img_index]
+            button.config(image=new_image)
+            button.current_image = new_image
+            #get the status of device
+            device_status[btn_index+1] = 1 
+        #if on then off
+        if current_img in device_img_on:
+            img_index = device_img_on.index(current_img)
+            new_image = device_img_off[img_index]
+            button.config(image=new_image)
+            button.current_image = new_image 
+            device_status[btn_index+1] = 0 
+        print("...........")
+        print("After pressed button: \n" + str(device_status)) 
+        publish_message()
+
+    def publish_message():
+        nonlocal prev_device_status
+        nonlocal device_status
+        if prev_device_status == device_status:
+            print("Same status of device")
+        else:
+            mqtt_client.publish("rasp4_to_esp32", str(device_status), qos=2)
+            prev_device_status.update(device_status)
+            print("Publish to mqtt: \n" + str(device_status))
+            print("...........\n")
 
     def switch_to_room1(room1_btn, room2_btn):
         room1_frame.tkraise()
@@ -54,7 +118,7 @@ def mainx(queue):
     screen_height = window.winfo_screenheight()
     #window.resizable(False,False)
     window.config(bg="white")
-    print(str(screen_width)+"|"+str(screen_height))
+    #print(str(screen_width)+"|"+str(screen_height))
     # Add padding to the window
     window.padding = 10
     window.configure(padx=window.padding, pady=window.padding)
@@ -75,6 +139,30 @@ def mainx(queue):
     bulb_on = Image.open("img/light_on.png")
     bulb_on = bulb_on.resize((200,200), Image.LANCZOS)
     bulb_on = ImageTk.PhotoImage(bulb_on)
+
+    fan_off = Image.open("img/fan_off.png")
+    fan_off = fan_off.resize((200,200), Image.LANCZOS)
+    fan_off = ImageTk.PhotoImage(fan_off)
+
+    fan_on = Image.open("img/fan_on.png")
+    fan_on = fan_on.resize((200,200), Image.LANCZOS)
+    fan_on = ImageTk.PhotoImage(fan_on)
+
+    tv_off = Image.open("img/tv_off.png")
+    tv_off = tv_off.resize((200,200), Image.LANCZOS)
+    tv_off = ImageTk.PhotoImage(tv_off)
+
+    tv_on = Image.open("img/tv_on.png")
+    tv_on = tv_on.resize((200,200), Image.LANCZOS)
+    tv_on = ImageTk.PhotoImage(tv_on)
+
+    air_off = Image.open("img/air_off.png")
+    air_off = air_off.resize((200,200), Image.LANCZOS)
+    air_off = ImageTk.PhotoImage(air_off)
+
+    air_on = Image.open("img/air_on.png")
+    air_on = air_on.resize((200,200), Image.LANCZOS)
+    air_on = ImageTk.PhotoImage(air_on)
 
     bedroom_on = Image.open("img/bedroom_on.png")
     bedroom_on = bedroom_on.resize((90,100), Image.LANCZOS)
@@ -379,11 +467,11 @@ def mainx(queue):
     #row 1, col 1
     room1_cbbox_1_1_str = tk.StringVar()
     room1_frame_1_1 = tk.Frame(room1_frame, borderwidth=2, relief="solid", background="white")
-    room1_btn_1_1 = tk.Button(room1_frame_1_1, image=bulb_off, bg="white", fg="white")
-    room1_btn_1_1.current_image = bulb_off
+    room1_btn_1_1 = tk.Button(room1_frame_1_1, image=fan_off, bg="white", fg="white")
+    room1_btn_1_1.current_image = fan_off
     room1_btn_1_1.configure(command=lambda btn=room1_btn_1_1: toggle_image(btn))
     room1_btn_1_1.pack(side="top", ipadx=5, ipady=5)
-    room1_cbbox_1_1 = ttk.Combobox(room1_frame_1_1, font="Verdana 20 bold", width=5, justify="center", textvariable=room1_cbbox_1_1_str, state="readonly", values=cbbox_value)
+    room1_cbbox_1_1 = ttk.Combobox(room1_frame_1_1, font="Verdana 20 bold", width=8, justify="center", textvariable=room1_cbbox_1_1_str, state="readonly", values=cbbox_value)
     room1_cbbox_1_1.pack(anchor="n", pady=10) 
     room1_cbbox_1_1.set("One")
     room1_cbbox_1_1.bind('<<ComboboxSelected>>', room1_1_1)
@@ -399,7 +487,7 @@ def mainx(queue):
     room1_btn_1_2.current_image = bulb_off
     room1_btn_1_2.configure(command=lambda btn=room1_btn_1_2: toggle_image(btn))
     room1_btn_1_2.pack(side="top", ipadx=5, ipady=5)
-    room1_cbbox_1_2 = ttk.Combobox(room1_frame_1_2, font="Verdana 20 bold", width=5, justify="center", textvariable=room1_cbbox_1_2_str, state="readonly", values=cbbox_value)
+    room1_cbbox_1_2 = ttk.Combobox(room1_frame_1_2, font="Verdana 20 bold", width=8, justify="center", textvariable=room1_cbbox_1_2_str, state="readonly", values=cbbox_value)
     room1_cbbox_1_2.pack(anchor="n", pady=10) 
     room1_cbbox_1_2.set("Two")
     room1_cbbox_1_2.bind('<<ComboboxSelected>>', room1_1_2)
@@ -412,11 +500,11 @@ def mainx(queue):
     #row 1, col 3
     room1_cbbox_1_3_str = tk.StringVar()
     room1_frame_1_3 = tk.Frame(room1_frame, borderwidth=2, relief="solid", background="white")
-    room1_btn_1_3 = tk.Button(room1_frame_1_3, image=bulb_off, bg="white", fg="white")
-    room1_btn_1_3.current_image = bulb_off
+    room1_btn_1_3 = tk.Button(room1_frame_1_3, image=tv_off, bg="white", fg="white")
+    room1_btn_1_3.current_image = tv_off
     room1_btn_1_3.configure(command=lambda btn=room1_btn_1_3: toggle_image(btn))
     room1_btn_1_3.pack(side="top", ipadx=5, ipady=5)
-    room1_cbbox_1_3 = ttk.Combobox(room1_frame_1_3, font="Verdana 20 bold", width=5, justify="center", textvariable=room1_cbbox_1_3_str, state="readonly", values=cbbox_value)
+    room1_cbbox_1_3 = ttk.Combobox(room1_frame_1_3, font="Verdana 20 bold", width=8, justify="center", textvariable=room1_cbbox_1_3_str, state="readonly", values=cbbox_value)
     room1_cbbox_1_3.pack(anchor="n", pady=10) 
     room1_cbbox_1_3.set("Three")
     room1_cbbox_1_3.bind('<<ComboboxSelected>>', room1_1_3)
@@ -428,11 +516,11 @@ def mainx(queue):
     #row 1, col 4
     room1_cbbox_1_4_str = tk.StringVar()
     room1_frame_1_4 = tk.Frame(room1_frame, borderwidth=2, relief="solid", background="white")
-    room1_btn_1_4 = tk.Button(room1_frame_1_4, image=bulb_off, bg="white", fg="white")
-    room1_btn_1_4.current_image = bulb_off
+    room1_btn_1_4 = tk.Button(room1_frame_1_4, image=air_off, bg="white", fg="white")
+    room1_btn_1_4.current_image = air_off
     room1_btn_1_4.configure(command=lambda btn=room1_btn_1_4: toggle_image(btn))
     room1_btn_1_4.pack(side="top", ipadx=5, ipady=5)
-    room1_cbbox_1_4 = ttk.Combobox(room1_frame_1_4, font="Verdana 20 bold", width=5, justify="center", textvariable=room1_cbbox_1_4_str, state="readonly", values=cbbox_value)
+    room1_cbbox_1_4 = ttk.Combobox(room1_frame_1_4, font="Verdana 20 bold", width=8, justify="center", textvariable=room1_cbbox_1_4_str, state="readonly", values=cbbox_value)
     room1_cbbox_1_4.pack(anchor="n", pady=10) 
     room1_cbbox_1_4.set("Four")
     room1_cbbox_1_4.bind('<<ComboboxSelected>>', room1_1_4)
@@ -441,8 +529,6 @@ def mainx(queue):
     room1_img_1_4.pack( expand=True)
     room1_img_1_4.configure(background="white")
     room1_frame_1_4.grid(row=1,column=4,sticky="nsew", padx=5,pady=5)
-
-
 
 
     ####################################room2 frame
@@ -458,7 +544,7 @@ def mainx(queue):
     room2_btn_2_1.current_image = bulb_off
     room2_btn_2_1.configure(command=lambda btn=room2_btn_2_1: toggle_image(btn))
     room2_btn_2_1.pack(side="top", ipadx=5, ipady=5)
-    room2_cbbox_2_1 = ttk.Combobox(room2_frame_2_1, font="Verdana 20 bold", width=5, justify="center", textvariable=room2_cbbox_2_1_str, state="readonly", values=cbbox_value)
+    room2_cbbox_2_1 = ttk.Combobox(room2_frame_2_1, font="Verdana 20 bold", width=8, justify="center", textvariable=room2_cbbox_2_1_str, state="readonly", values=cbbox_value)
     room2_cbbox_2_1.pack(anchor="n", pady=10) 
     room2_cbbox_2_1.set("Five")
     room2_cbbox_2_1.bind('<<ComboboxSelected>>', room2_2_1)
@@ -474,7 +560,7 @@ def mainx(queue):
     room2_btn_2_2.current_image = bulb_off
     room2_btn_2_2.configure(command=lambda btn=room2_btn_2_2: toggle_image(btn))
     room2_btn_2_2.pack(side="top", ipadx=5, ipady=5)
-    room2_cbbox_2_2 = ttk.Combobox(room2_frame_2_2, font="Verdana 20 bold", width=5, justify="center", textvariable=room2_cbbox_2_2_str, state="readonly", values=cbbox_value)
+    room2_cbbox_2_2 = ttk.Combobox(room2_frame_2_2, font="Verdana 20 bold", width=8, justify="center", textvariable=room2_cbbox_2_2_str, state="readonly", values=cbbox_value)
     room2_cbbox_2_2.pack(anchor="n", pady=10) 
     room2_cbbox_2_2.set("Six")
     room2_cbbox_2_2.bind('<<ComboboxSelected>>', room2_2_2)
@@ -491,7 +577,7 @@ def mainx(queue):
     room2_btn_2_3.current_image = bulb_off
     room2_btn_2_3.configure(command=lambda btn=room2_btn_2_3: toggle_image(btn))
     room2_btn_2_3.pack(side="top", ipadx=5, ipady=5)
-    room2_cbbox_2_3 = ttk.Combobox(room2_frame_2_3, font="Verdana 20 bold", width=5, justify="center", textvariable=room2_cbbox_2_3_str, state="readonly", values=cbbox_value)
+    room2_cbbox_2_3 = ttk.Combobox(room2_frame_2_3, font="Verdana 20 bold", width=8, justify="center", textvariable=room2_cbbox_2_3_str, state="readonly", values=cbbox_value)
     room2_cbbox_2_3.pack(anchor="n", pady=10) 
     room2_cbbox_2_3.set("Seven")
     room2_cbbox_2_3.bind('<<ComboboxSelected>>', room2_2_3)
@@ -508,7 +594,7 @@ def mainx(queue):
     room2_btn_2_4.current_image = bulb_off
     room2_btn_2_4.configure(command=lambda btn=room2_btn_2_4: toggle_image(btn))
     room2_btn_2_4.pack(side="top", ipadx=5, ipady=5)
-    room2_cbbox_2_4 = ttk.Combobox(room2_frame_2_4, font="Verdana 20 bold", width=5, justify="center", textvariable=room2_cbbox_2_4_str, state="readonly", values=cbbox_value)
+    room2_cbbox_2_4 = ttk.Combobox(room2_frame_2_4, font="Verdana 20 bold", width=8, justify="center", textvariable=room2_cbbox_2_4_str, state="readonly", values=cbbox_value)
     room2_cbbox_2_4.pack(anchor="n", pady=10) 
     room2_cbbox_2_4.set("Eight")
     room2_cbbox_2_4.bind('<<ComboboxSelected>>', room2_2_4)
@@ -517,18 +603,87 @@ def mainx(queue):
     room2_img_2_4.pack( expand=True)
     room2_img_2_4.configure(background="white")
     room2_frame_2_4.grid(row=1,column=4,sticky="nsew", padx=5,pady=5)
-
+    
+    #define variables
+    comboboxes = (room1_cbbox_1_1, room1_cbbox_1_2, room1_cbbox_1_3, room1_cbbox_1_4, room2_cbbox_2_1, room2_cbbox_2_2, room2_cbbox_2_3, room2_cbbox_2_4)
+    devices_btn = (room1_btn_1_1, room1_btn_1_2, room1_btn_1_3, room1_btn_1_4, room2_btn_2_1, room2_btn_2_2, room2_btn_2_3, room2_btn_2_4)
+    device_img_off = (bulb_off, fan_off, tv_off, air_off)
+    device_img_on = (bulb_on, fan_on, tv_on, air_on)
 
     # Function to update the number and print it to console
-    def receive_hand_gesture(queue):
+    def receive_hand_gesture(queue, comboboxes, devices_btn, device_img_off, device_img_on):
         if not queue.empty():
             current_gesture = queue.get()
+            #receive value from 0 to 11
+            mapped_gesture = {
+                0: "Zero",
+                1: "One",
+                2: "Two",
+                3: "Three",
+                4: "Four",
+                5: "Six",
+                6: "Seven",
+                7: "Eight",
+                8: "Nine",
+                9: "Ten",
+                10: "Eleven",
+                11: "Twelve"
+            }
+
+            current_gesture = mapped_gesture[current_gesture]
             print("get from queue: " + str(current_gesture))
-        window.after(1, receive_hand_gesture, queue)
+            for cbbox in comboboxes:
+                #check if any combobox has the same gesture as received value
+                if cbbox.get() == current_gesture:
+                    #get which combobox is have that gesture value
+                    device_index = comboboxes.index(cbbox)
+                    #get the current image corresponding to the device status
+                    current_img = devices_btn[device_index].current_image
+                    #if off then on
+                    if current_img in device_img_off:
+                        #find index
+                        img_index = device_img_off.index(current_img)
+                        new_image = device_img_on[img_index]
+                        devices_btn[device_index].config(image=new_image)
+                        devices_btn[device_index].current_image = new_image
+                        #get the status of device
+                        device_status[device_index+1] = 1 
+                    #if on then off
+                    if current_img in device_img_on:
+                        img_index = device_img_on.index(current_img)
+                        new_image = device_img_off[img_index]
+                        devices_btn[device_index].config(image=new_image)
+                        devices_btn[device_index].current_image = new_image 
+                        device_status[device_index+1] = 0 
+            print("After detect gesture: " + str(device_status))   
+            publish_message()
+        window.after(1, receive_hand_gesture, queue, comboboxes, devices_btn, device_img_off, device_img_on)
 
-
+    def process_received_message(received_message, device_status, devices_btn):
+        device_status = received_message
+        print("Receive message: "+ str(device_status) + "\n")
+        
+        for key, value in received_message.items():
+            current_img = devices_btn[key-1].current_image
+            if current_img in device_img_off:
+                #find index
+                img_index = device_img_off.index(current_img)
+                if value == 0:
+                    new_image = device_img_off[img_index]
+                if value == 1:
+                    new_image = device_img_on[img_index]
+            if current_img in device_img_on:
+                img_index = device_img_on.index(current_img)
+                if value == 0:
+                    new_image = device_img_off[img_index]
+                if value == 1:
+                    new_image = device_img_on[img_index]                
+            devices_btn[key-1].config(image=new_image)   
+            devices_btn[key-1].current_image = new_image
+    
     # Start the updates
-    receive_hand_gesture(queue)
+    receive_hand_gesture(queue, comboboxes, devices_btn, device_img_off, device_img_on)
+    
 
     window.mainloop()
     print('exited.........')
@@ -610,11 +765,12 @@ def classifier_gesture(queue):
         if not ret:
             break
 
-    image = draw_fps(image, fps)
-    cv.imshow('Hand Gesture Recognition', image)
+        image = draw_fps(image, fps)
+        cv.imshow('Hand Gesture Recognition', image)
 
     cap.release()
     cv.destroyAllWindows()
+    print("Close hand gesture.......")
 
 
 
@@ -853,24 +1009,24 @@ def draw_fps(image, fps):
     return image
 
 if __name__ == "__main__":
-    key = cv.waitKey(1)
 
     # Create two queues for inter-process communication
     queue = multiprocessing.Queue()
 
     # Create two processes for running the scripts
+    print("Starting system.......")
     process1 = multiprocessing.Process(target=classifier_gesture, args=(queue,))
+    print("Starting hand classifier.......")
     process2 = multiprocessing.Process(target=mainx, args=(queue,))
+    print("Starting GUI system.......")
     # Start both processes
     process1.start()
     process2.start()
     #process2.start()
-    if key == ord("q"):  # ESC
-        process1.kill()
-        process2.kill()
+
     # Wait for the GUI process to finish
     process1.join()
     process2.join()
 
 
-    print("GUI process finished")
+    print("System closed")
