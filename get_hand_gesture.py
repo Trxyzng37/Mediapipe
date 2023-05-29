@@ -10,7 +10,7 @@ import numpy as np
 import mediapipe as mp
 import time
 
-def classifier_gesture(queue):
+def classifier_gesture():
     hand_sign_id = 0
 
     cap = cv.VideoCapture(0)
@@ -95,21 +95,6 @@ def classifier_gesture(queue):
                     keypoint_classifier_labels,
                     hand_sign_id
                 )
-
-                if queue is None:
-                    pass
-                else:
-                    if prev_occurence[hand_sign_id] == 0:
-                        prev_occurence[hand_sign_id] = int(time.time())
-                        queue.put(hand_sign_id)
-                        print("put to queue: "+str(hand_sign_id))
-                    else:
-                        if time.time() - prev_occurence[hand_sign_id] >= 3:
-                            queue.put(hand_sign_id)
-                            print("put to queue: "+str(hand_sign_id))
-                            prev_occurence[hand_sign_id] = time.time()
-                        else:
-                            pass
 
 
         # draw fps on frame

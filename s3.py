@@ -1,7 +1,4 @@
 import multiprocessing
-import subprocess
-import get_hand_gesture
-import tttkinter
 import tkinter as tk
 from tkinter import ttk
 from PIL import ImageTk,Image  
@@ -720,53 +717,57 @@ def classifier_gesture(queue):
         10: 0,
         11: 0
     }
+    frame_count = 0
+    current_frame = None
 
     while True:
         key = cv.waitKey(1)
         ret, image = cap.read()
-
-        image = cv.flip(image, 1)
-
+        frame_count += 1
+        
         curr_time = cv.getTickCount()
         time_taken = (curr_time - prev_time) / cv.getTickFrequency()
         fps = math.ceil(1 / time_taken)
         prev_time = curr_time
 
-        results = hands.process(image)
-
-        if results.multi_hand_landmarks is not None:
-            for hand_landmarks, handedness in zip(results.multi_hand_landmarks, results.multi_handedness):
-                bounding_box = calc_bounding_box(image, hand_landmarks)
-                landmark_list = calc_landmark_list(image, hand_landmarks)
-                normalized_processed_landmark_list = calc_normalized_processed_landmark_list(landmark_list)
-                hand_sign_id = key_point_classifier(normalized_processed_landmark_list)
-                if hand_sign_id is None:
-                    pass
-                else:
-                    if prev_occurence[hand_sign_id] == 0:
-                        prev_occurence[hand_sign_id] = int(time.time())
-                        queue.put(hand_sign_id)
-                        print("put to queue: "+str(hand_sign_id))
+        if frame_count % 5 == 0:
+            current_frame = image
+            current_frame = cv.flip(current_frame, 1)
+            results = hands.process(current_frame)
+            if results.multi_hand_landmarks is not None:
+                for hand_landmarks, handedness in zip(results.multi_hand_landmarks, results.multi_handedness):
+                    bounding_box = calc_bounding_box(current_frame, hand_landmarks)
+                    landmark_list = calc_landmark_list(current_frame, hand_landmarks)
+                    normalized_processed_landmark_list = calc_normalized_processed_landmark_list(landmark_list)
+                    hand_sign_id = key_point_classifier(normalized_processed_landmark_list)
+                    if hand_sign_id is None:
+                        pass
                     else:
-                        if int(time.time()) - prev_occurence[hand_sign_id] >= 3:
+                        if prev_occurence[hand_sign_id] == 0:
+                            prev_occurence[hand_sign_id] = int(time.time())
                             queue.put(hand_sign_id)
                             print("put to queue: "+str(hand_sign_id))
-                            prev_occurence[hand_sign_id] = int(time.time())
                         else:
-                            pass
+                            if int(time.time()) - prev_occurence[hand_sign_id] >= 3:
+                                queue.put(hand_sign_id)
+                                print("put to queue: "+str(hand_sign_id))
+                                prev_occurence[hand_sign_id] = int(time.time())
+                            else:
+                                pass
 
-                image = draw_bounding_box(image, bounding_box)
-                image = draw_landmarks(image, landmark_list)
-                image = draw_info_text(image, bounding_box, handedness, keypoint_classifier_labels, hand_sign_id)
-        
+                    current_frame = draw_bounding_box(current_frame, bounding_box)
+                    current_frame = draw_landmarks(current_frame, landmark_list)
+                    current_frame = draw_info_text(current_frame, bounding_box, handedness, keypoint_classifier_labels, hand_sign_id)
+            current_frame = draw_fps(current_frame, fps)
+            cv.imshow('Hand Gesture Recognition', current_frame)
+        else:
+            pass
         if key == 27:  # ESC
             break
 
         if not ret:
             break
 
-        image = draw_fps(image, fps)
-        cv.imshow('Hand Gesture Recognition', image)
 
     cap.release()
     cv.destroyAllWindows()
@@ -1030,3 +1031,4 @@ if __name__ == "__main__":
 
 
     print("System closed")
+                                            
