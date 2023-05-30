@@ -14,10 +14,13 @@ import mediapipe as mp
 import paho.mqtt.client as mqtt
 
 
-
+received_message = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0}
+device_status = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0}
+prev_device_status = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0}
 
 def mainx(queue):
-    received_message = {}
+
+    cbbox_value = ("No use","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten","Eleven","Twelve")
 
     def on_connect(client, userdata, flags, rc):
         if rc == 0:
@@ -27,11 +30,22 @@ def mainx(queue):
 
     def on_message(client, userdata, message):
         global received_message
+        global prev_device_status
+        global device_status
         msg = str(message.payload.decode("utf-8"))
-        msg_dict = eval(msg)
-        received_message = msg_dict
-        print("Get from mqtt: " + msg)
-        process_received_message(received_message, device_status, devices_btn)
+        #received_message = eval(msg)
+        received_message[1] = int(msg[0])
+        received_message[2] = int(msg[1])
+        received_message[3] = int(msg[2])
+        received_message[4] = int(msg[3])
+        received_message[5] = int(msg[4])
+        received_message[6] = int(msg[5])
+        received_message[7] = int(msg[6])
+        received_message[8] = int(msg[7])
+        print("Get from mqtt: \n" + msg)
+        prev_device_status = device_status.copy()
+        device_status = received_message.copy()
+        process_received_message()
 
     def connect_to_mqtt():
         broker_address = "broker.hivemq.com"         #address of cloud mqtt server 
@@ -49,14 +63,13 @@ def mainx(queue):
         client.loop_start()
         return client
     
-    #define default values
-    cbbox_value = ("No use","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten","Eleven","Twelve")
-    device_status = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0}
-    prev_device_status = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0}
 
     mqtt_client = connect_to_mqtt()
 
     def toggle_image(button):
+        global device_status
+        global prev_device_status
+        prev_device_status = device_status.copy()
         current_img = button.current_image
         btn_index = devices_btn.index(button)
         #if off then on
@@ -74,20 +87,22 @@ def mainx(queue):
             button.config(image=new_image)
             button.current_image = new_image 
             device_status[btn_index+1] = 0 
-        print("...........")
+        print("................................................")
+        print("\nBefore pressed button: \n" + str(prev_device_status)) 
         print("After pressed button: \n" + str(device_status)) 
         publish_message()
 
     def publish_message():
-        nonlocal prev_device_status
-        nonlocal device_status
-        if prev_device_status == device_status:
-            print("Same status of device")
+        global prev_device_status
+        global device_status
+        if str(prev_device_status) == str(device_status):
+            print("Same status as before")
         else:
-            mqtt_client.publish("rasp4_to_esp32", str(device_status), qos=2)
-            prev_device_status.update(device_status)
-            print("Publish to mqtt: \n" + str(device_status))
-            print("...........\n")
+            msg = str(device_status[1])+str(device_status[2])+str(device_status[3])+str(device_status[4])+str(device_status[5])+str(device_status[6])+str(device_status[7])+str(device_status[8])
+            mqtt_client.publish("rasp4_to_esp32", str(msg), qos=2)
+            prev_device_status = device_status.copy()
+            print("Publish to mqtt: \n" + str(msg))
+            print("...........................................\n")
 
     def switch_to_room1(room1_btn, room2_btn):
         room1_frame.tkraise()
@@ -652,13 +667,14 @@ def mainx(queue):
                         devices_btn[device_index].config(image=new_image)
                         devices_btn[device_index].current_image = new_image 
                         device_status[device_index+1] = 0 
-            print("After detect gesture: " + str(device_status))   
+            print("After detect gesture: \n" + str(device_status))   
             publish_message()
         window.after(1, receive_hand_gesture, queue, comboboxes, devices_btn, device_img_off, device_img_on)
 
-    def process_received_message(received_message, device_status, devices_btn):
-        device_status = received_message
-        print("Receive message: "+ str(device_status) + "\n")
+    def process_received_message():
+        global received_message
+        nonlocal devices_btn
+        print("Message for process: \n"+ str(received_message) + "\n")
         
         for key, value in received_message.items():
             current_img = devices_btn[key-1].current_image
@@ -1031,4 +1047,3 @@ if __name__ == "__main__":
 
 
     print("System closed")
-                                            
