@@ -20,7 +20,7 @@ prev_device_status = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0}
 
 def mainx(queue):
 
-    cbbox_value = ("No use","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten","Eleven","Twelve")
+    cbbox_value = ("No use","Zero","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten","Eleven","Twelve")
 
     def on_connect(client, userdata, flags, rc):
         if rc == 0:
@@ -631,10 +631,10 @@ def mainx(queue):
                 0: "Zero",
                 1: "One",
                 2: "Two",
-                3: "Three",
-                4: "Four",
-                5: "Six",
-                6: "Seven",
+                3: "Four",
+                4: "Five",
+                5: "Three",
+                6: "Six",
                 7: "Eight",
                 8: "Nine",
                 9: "Ten",
