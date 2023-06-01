@@ -22,49 +22,7 @@ def mainx(queue):
 
     cbbox_value = ("No use","Zero","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten","Eleven","Twelve")
 
-    def on_connect(client, userdata, flags, rc):
-        if rc == 0:
-            print("Connection successful")
-        else:
-            print("Connection failed")
 
-    def on_message(client, userdata, message):
-        global received_message
-        global prev_device_status
-        global device_status
-        msg = str(message.payload.decode("utf-8"))
-        #received_message = eval(msg)
-        received_message[1] = int(msg[0])
-        received_message[2] = int(msg[1])
-        received_message[3] = int(msg[2])
-        received_message[4] = int(msg[3])
-        received_message[5] = int(msg[4])
-        received_message[6] = int(msg[5])
-        received_message[7] = int(msg[6])
-        received_message[8] = int(msg[7])
-        print("Get from mqtt: \n" + msg)
-        prev_device_status = device_status.copy()
-        device_status = received_message.copy()
-        process_received_message()
-
-    def connect_to_mqtt():
-        broker_address = "broker.hivemq.com"         #address of cloud mqtt server 
-        port = 1883                                  #port to connect to mqtt server
-        user = "test"                                #user name to connect to server
-        password = "test"                            #password to connect to server
-        topic = "rasp4_to_esp32"                               #main topic
-        client = mqtt.Client(client_id="hoacchitrung", clean_session=True, userdata=None, protocol=mqtt.MQTTv311, transport="tcp") #create new client
-        client.username_pw_set(user,password)     #user and password for connect
-        print("Connecting to broker...")          #print to console
-        client.connect(broker_address, port, 5)   #connect to broker with keep alive time = 5s
-        client.on_connect = on_connect
-        client.subscribe("esp32_to_rasp4", qos=2)
-        client.on_message = on_message
-        client.loop_start()
-        return client
-    
-
-    mqtt_client = connect_to_mqtt()
 
     def toggle_image(button):
         global device_status
@@ -696,12 +654,57 @@ def mainx(queue):
     
     # Start the updates
     receive_hand_gesture(queue, comboboxes, devices_btn, device_img_off, device_img_on)
+
+    def on_connect(client, userdata, flags, rc):
+        if rc == 0:
+            print("Connection successful")
+        else:
+            print("Connection failed")
+
+    def on_message(client, userdata, message):
+        global received_message
+        global prev_device_status
+        global device_status
+        msg = str(message.payload.decode("utf-8"))
+        #received_message = eval(msg)
+        received_message[1] = int(msg[0])
+        received_message[2] = int(msg[1])
+        received_message[3] = int(msg[2])
+        received_message[4] = int(msg[3])
+        received_message[5] = int(msg[4])
+        received_message[6] = int(msg[5])
+        received_message[7] = int(msg[6])
+        received_message[8] = int(msg[7])
+        print("Get from mqtt: \n" + msg)
+        prev_device_status = device_status.copy()
+        device_status = received_message.copy()
+        process_received_message()
+
+    def connect_to_mqtt():
+        broker_address = "broker.hivemq.com"         #address of cloud mqtt server 
+        port = 1883                                  #port to connect to mqtt server
+        user = "test"                                #user name to connect to server
+        password = "test"                            #password to connect to server
+        topic = "rasp4_to_esp32"                               #main topic
+        client = mqtt.Client(client_id="hoacchitrung", clean_session=True, userdata=None, protocol=mqtt.MQTTv311, transport="tcp") #create new client
+        client.username_pw_set(user,password)     #user and password for connect
+        print("Connecting to broker...")          #print to console
+        client.connect(broker_address, port, 5)   #connect to broker with keep alive time = 5s
+        client.on_connect = on_connect
+        client.subscribe("esp32_to_rasp4", qos=2)
+        client.on_message = on_message
+        client.loop_start()
+        return client
     
+
+    mqtt_client = connect_to_mqtt()    
 
     window.mainloop()
     print('exited.........')
 
 
+
+##### hand gesture detection
 def classifier_gesture(queue):
     # define some default variables
     cap = cv.VideoCapture(0)
@@ -735,7 +738,8 @@ def classifier_gesture(queue):
     }
     frame_count = 0
     current_frame = None
-
+    delay_time = 4
+    
     while True:
         key = cv.waitKey(1)
         ret, image = cap.read()
@@ -764,7 +768,7 @@ def classifier_gesture(queue):
                             queue.put(hand_sign_id)
                             print("put to queue: "+str(hand_sign_id))
                         else:
-                            if int(time.time()) - prev_occurence[hand_sign_id] >= 3:
+                            if int(time.time()) - prev_occurence[hand_sign_id] >= delay_time: 
                                 queue.put(hand_sign_id)
                                 print("put to queue: "+str(hand_sign_id))
                                 prev_occurence[hand_sign_id] = int(time.time())
