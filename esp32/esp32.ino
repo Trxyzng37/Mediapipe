@@ -2,8 +2,8 @@
 #include <PubSubClient.h>  //include mqtt library
 
 
-const char* ssid = "VIETTEL";                //wifi name
-const char* password = "13012001";        //wifi password
+const char* ssid = "TTT";                //wifi name
+const char* password = "10032001";        //wifi password
 
 WiFiClient espClient;
 PubSubClient client(espClient);

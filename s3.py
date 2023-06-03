@@ -593,11 +593,11 @@ def mainx(queue):
                 4: "Five",
                 5: "Three",
                 6: "Six",
-                7: "Eight",
-                8: "Nine",
-                9: "Ten",
-                10: "Eleven",
-                11: "Twelve"
+                7: "Seven",
+                8: "Eight",
+                9: "Nine",
+                10: "Ten",
+                11: "Eleven"
             }
 
             current_gesture = mapped_gesture[current_gesture]
