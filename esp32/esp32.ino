@@ -53,6 +53,7 @@ const int btn5 = 16;
 const int btn6 = 32;
 const int btn7 = 33;
 const int btn8 = 27;
+const int btn9 = 26;
 
 int buttonState1;
 int buttonState2;
@@ -62,6 +63,7 @@ int buttonState5;
 int buttonState6;
 int buttonState7;
 int buttonState8;
+int buttonState9;
 
 int lastButtonState1 = HIGH;
 int lastButtonState2 = HIGH;
@@ -71,6 +73,7 @@ int lastButtonState5 = HIGH;
 int lastButtonState6 = HIGH;
 int lastButtonState7 = HIGH;
 int lastButtonState8 = HIGH;
+int lastButtonState9 = HIGH;
 
 unsigned long lastDebounceTime1 = 0;
 unsigned long lastDebounceTime2 = 0;
@@ -80,6 +83,8 @@ unsigned long lastDebounceTime5 = 0;
 unsigned long lastDebounceTime6 = 0;
 unsigned long lastDebounceTime7 = 0;
 unsigned long lastDebounceTime8 = 0;
+unsigned long lastDebounceTime9 = 0;
+
 unsigned long debounceDelay = 50;
 
 const int led1 = 17;
@@ -365,6 +370,25 @@ void btn_8() {
   lastButtonState8 = reading;
 }
 
+void btn_9() {
+  int reading = digitalRead(btn9);
+
+  if (reading != lastButtonState9) {
+    lastDebounceTime9 = millis();
+  }
+  if ((millis() - lastDebounceTime9) > debounceDelay) {
+    if (reading != buttonState9) {
+      buttonState9 = reading;
+      if (buttonState9 == HIGH) {
+        client.publish("esp32_to_rasp4", "0");
+        Serial.print("\nTurn off hand gesture mode\n");
+        //code here
+      }
+    }
+  }
+  lastButtonState9 = reading;
+}
+
 long lastReconnectAttempt = 0;
 
 //reconnect
@@ -397,7 +421,8 @@ void setup() {
   pinMode(btn6, INPUT_PULLUP);
   pinMode(btn7, INPUT_PULLUP);
   pinMode(btn8, INPUT_PULLUP);
-
+  pinMode(btn9, INPUT_PULLUP);
+  
   pinMode(led1, OUTPUT);
   pinMode(led2, OUTPUT);
   pinMode(led3, OUTPUT);
@@ -437,6 +462,7 @@ void loop()
     btn_6();
     btn_7();
     btn_8();
+    btn_9();
     client.loop();
   }
 }

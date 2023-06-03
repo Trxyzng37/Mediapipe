@@ -57,7 +57,7 @@ def mainx(queue):
             print("Same status as before")
         else:
             msg = str(device_status[1])+str(device_status[2])+str(device_status[3])+str(device_status[4])+str(device_status[5])+str(device_status[6])+str(device_status[7])+str(device_status[8])
-            mqtt_client.publish("rasp4_to_esp32", str(msg), qos=2)
+            mqtt_client.publish("rasp4_to_esp32", str(msg), qos=2, retain=True)
             prev_device_status = device_status.copy()
             print("Publish to mqtt: \n" + str(msg))
             print("...........................................\n")
@@ -206,7 +206,7 @@ def mainx(queue):
 
     #room1 frame###############################
     # Merge cells in the device frame and add text
-    label = ttk.Label(room1_frame, text="HOẶC CHÍ TRUNG - NGUYỄN GIA HƯNG\n ELECTRONIC DEVICES CONTROL SYSTEM USING HAND GESTURE RECOGNITION\nHCMUTE", font=("Arial", 8), anchor="center", justify="center")
+    label = ttk.Label(room1_frame, text="HOẶC CHÍ TRUNG - NGUYỄN GIA HƯNG\n ELECTRONIC DEVICES CONTROL SYSTEM USING HAND GESTURE RECOGNITION\nHo Chi Minh City University of Technology and Education", font=("Arial", 8), anchor="center", justify="center")
     label.grid(row=0, column=1, ipadx=0, ipady=10, padx=5, pady=5, sticky="nsew", columnspan=4)
     label.configure(background="white")
 
@@ -434,11 +434,12 @@ def mainx(queue):
         room2_img_2_4.image = current_image
         print(selected_value)
 
+###room 1
     #row 1, col 1
     room1_cbbox_1_1_str = tk.StringVar()
     room1_frame_1_1 = tk.Frame(room1_frame, borderwidth=2, relief="solid", background="white")
-    room1_btn_1_1 = tk.Button(room1_frame_1_1, image=fan_off, bg="white", fg="white")
-    room1_btn_1_1.current_image = fan_off
+    room1_btn_1_1 = tk.Button(room1_frame_1_1, image=bulb_off, bg="white", fg="white")
+    room1_btn_1_1.current_image = bulb_off
     room1_btn_1_1.configure(command=lambda btn=room1_btn_1_1: toggle_image(btn))
     room1_btn_1_1.pack(side="top", ipadx=5, ipady=5)
     room1_cbbox_1_1 = ttk.Combobox(room1_frame_1_1, font="Verdana 20 bold", width=8, justify="center", textvariable=room1_cbbox_1_1_str, state="readonly", values=cbbox_value)
@@ -453,8 +454,8 @@ def mainx(queue):
     #row 1, col 2
     room1_cbbox_1_2_str = tk.StringVar()
     room1_frame_1_2 = tk.Frame(room1_frame, borderwidth=2, relief="solid", background="white")
-    room1_btn_1_2 = tk.Button(room1_frame_1_2, image=bulb_off, bg="white", fg="white")
-    room1_btn_1_2.current_image = bulb_off
+    room1_btn_1_2 = tk.Button(room1_frame_1_2, image=fan_off, bg="white", fg="white")
+    room1_btn_1_2.current_image = fan_off
     room1_btn_1_2.configure(command=lambda btn=room1_btn_1_2: toggle_image(btn))
     room1_btn_1_2.pack(side="top", ipadx=5, ipady=5)
     room1_cbbox_1_2 = ttk.Combobox(room1_frame_1_2, font="Verdana 20 bold", width=8, justify="center", textvariable=room1_cbbox_1_2_str, state="readonly", values=cbbox_value)
@@ -501,7 +502,7 @@ def mainx(queue):
     room1_frame_1_4.grid(row=1,column=4,sticky="nsew", padx=5,pady=5)
 
 
-    ####################################room2 frame
+    ####################################room2 
     # Merge cells in the device frame and add text
     label = ttk.Label(room2_frame, text="HOẶC CHÍ TRUNG - NGUYỄN GIA HƯNG\n ELECTRONIC DEVICES CONTROL SYSTEM USING HAND GESTURE RECOGNITION\nHCMUTE", font=("Arial", 8), anchor="center", justify="center")
     label.grid(row=0, column=1, ipadx=0, ipady=10, padx=5, pady=5, sticky="nsew", columnspan=4)
@@ -526,8 +527,8 @@ def mainx(queue):
     #row 1, col 2
     room2_cbbox_2_2_str = tk.StringVar()
     room2_frame_2_2 = tk.Frame(room2_frame, borderwidth=2, relief="solid", background="white")
-    room2_btn_2_2 = tk.Button(room2_frame_2_2, image=bulb_off, bg="white", fg="white")
-    room2_btn_2_2.current_image = bulb_off
+    room2_btn_2_2 = tk.Button(room2_frame_2_2, image=fan_off, bg="white", fg="white")
+    room2_btn_2_2.current_image = fan_off
     room2_btn_2_2.configure(command=lambda btn=room2_btn_2_2: toggle_image(btn))
     room2_btn_2_2.pack(side="top", ipadx=5, ipady=5)
     room2_cbbox_2_2 = ttk.Combobox(room2_frame_2_2, font="Verdana 20 bold", width=8, justify="center", textvariable=room2_cbbox_2_2_str, state="readonly", values=cbbox_value)
@@ -543,8 +544,8 @@ def mainx(queue):
     #row 1, col 3
     room2_cbbox_2_3_str = tk.StringVar()
     room2_frame_2_3 = tk.Frame(room2_frame, borderwidth=2, relief="solid", background="white")
-    room2_btn_2_3 = tk.Button(room2_frame_2_3, image=bulb_off, bg="white", fg="white")
-    room2_btn_2_3.current_image = bulb_off
+    room2_btn_2_3 = tk.Button(room2_frame_2_3, image=tv_off, bg="white", fg="white")
+    room2_btn_2_3.current_image = tv_off
     room2_btn_2_3.configure(command=lambda btn=room2_btn_2_3: toggle_image(btn))
     room2_btn_2_3.pack(side="top", ipadx=5, ipady=5)
     room2_cbbox_2_3 = ttk.Combobox(room2_frame_2_3, font="Verdana 20 bold", width=8, justify="center", textvariable=room2_cbbox_2_3_str, state="readonly", values=cbbox_value)
@@ -560,8 +561,8 @@ def mainx(queue):
     #row 1, col 4
     room2_cbbox_2_4_str = tk.StringVar()
     room2_frame_2_4 = tk.Frame(room2_frame, borderwidth=2, relief="solid", background="white")
-    room2_btn_2_4 = tk.Button(room2_frame_2_4, image=bulb_off, bg="white", fg="white")
-    room2_btn_2_4.current_image = bulb_off
+    room2_btn_2_4 = tk.Button(room2_frame_2_4, image=air_off, bg="white", fg="white")
+    room2_btn_2_4.current_image = air_off
     room2_btn_2_4.configure(command=lambda btn=room2_btn_2_4: toggle_image(btn))
     room2_btn_2_4.pack(side="top", ipadx=5, ipady=5)
     room2_cbbox_2_4 = ttk.Combobox(room2_frame_2_4, font="Verdana 20 bold", width=8, justify="center", textvariable=room2_cbbox_2_4_str, state="readonly", values=cbbox_value)
@@ -661,24 +662,40 @@ def mainx(queue):
         else:
             print("Connection failed")
 
+    def on_disconnect(client, userdata, rc):
+        print("Disconnected from MQTT broker.\n")
+        print("Atempt to reconnect................")
+
     def on_message(client, userdata, message):
         global received_message
         global prev_device_status
         global device_status
         msg = str(message.payload.decode("utf-8"))
-        #received_message = eval(msg)
-        received_message[1] = int(msg[0])
-        received_message[2] = int(msg[1])
-        received_message[3] = int(msg[2])
-        received_message[4] = int(msg[3])
-        received_message[5] = int(msg[4])
-        received_message[6] = int(msg[5])
-        received_message[7] = int(msg[6])
-        received_message[8] = int(msg[7])
-        print("Get from mqtt: \n" + msg)
-        prev_device_status = device_status.copy()
-        device_status = received_message.copy()
-        process_received_message()
+        if len(msg) == 8:
+            #received_message = eval(msg)
+            received_message[1] = int(msg[0])
+            received_message[2] = int(msg[1])
+            received_message[3] = int(msg[2])
+            received_message[4] = int(msg[3])
+            received_message[5] = int(msg[4])
+            received_message[6] = int(msg[5])
+            received_message[7] = int(msg[6])
+            received_message[8] = int(msg[7])
+            print("Get from mqtt: \n" + msg)
+            prev_device_status = device_status.copy()
+            device_status = received_message.copy()
+            process_received_message()
+        else:
+            if msg == "0":
+                room1_cbbox_1_1.set("No use")
+                room1_cbbox_1_2.set("No use")
+                room1_cbbox_1_3.set("No use")
+                room1_cbbox_1_4.set("No use")
+                room2_cbbox_2_1.set("No use")
+                room2_cbbox_2_2.set("No use")
+                room2_cbbox_2_3.set("No use")
+                room2_cbbox_2_4.set("No use")
+
 
     def connect_to_mqtt():
         broker_address = "broker.hivemq.com"         #address of cloud mqtt server 
@@ -691,6 +708,7 @@ def mainx(queue):
         print("Connecting to broker...")          #print to console
         client.connect(broker_address, port, 5)   #connect to broker with keep alive time = 5s
         client.on_connect = on_connect
+        client.on_disconnect = on_disconnect
         client.subscribe("esp32_to_rasp4", qos=2)
         client.on_message = on_message
         client.loop_start()
