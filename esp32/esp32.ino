@@ -198,7 +198,9 @@ void btn_1() {
       if (buttonState1 == HIGH) {
         LedState1 = !LedState1;
         String all_state = String(LedState1)+String(LedState2)+String(LedState3)+String(LedState4)+String(LedState5)+String(LedState6)+String(LedState7)+String(LedState8);
-        client.publish("esp32_to_rasp4", all_state.c_str());
+        if (client.connected()){
+          client.publish("esp32_to_rasp4", all_state.c_str());
+        }
         Serial.print("\nPublish 1: \n");
         Serial.print(all_state.c_str());
         digitalWrite(led1, LedState1);
@@ -221,7 +223,9 @@ void btn_2() {
       if (buttonState2 == HIGH) {
         LedState2 = !LedState2;
         String all_state = String(LedState1)+String(LedState2)+String(LedState3)+String(LedState4)+String(LedState5)+String(LedState6)+String(LedState7)+String(LedState8);
-        client.publish("esp32_to_rasp4", all_state.c_str());
+        if (client.connected()){
+          client.publish("esp32_to_rasp4", all_state.c_str());
+        }
         Serial.print("\nPublish 2: \n");
         Serial.print(all_state.c_str());
         digitalWrite(led2, LedState2);
@@ -244,7 +248,9 @@ void btn_3() {
       if (buttonState3 == HIGH) {
         LedState3 = !LedState3;
         String all_state = String(LedState1)+String(LedState2)+String(LedState3)+String(LedState4)+String(LedState5)+String(LedState6)+String(LedState7)+String(LedState8);
-        client.publish("esp32_to_rasp4", all_state.c_str());
+        if (client.connected()){
+          client.publish("esp32_to_rasp4", all_state.c_str());
+        }
         Serial.print("\nPublish 3: \n");
         Serial.print(all_state.c_str());
         digitalWrite(led3, LedState3);
@@ -267,7 +273,9 @@ void btn_4() {
       if (buttonState4 == HIGH) {
         LedState4 = !LedState4;
         String all_state = String(LedState1)+String(LedState2)+String(LedState3)+String(LedState4)+String(LedState5)+String(LedState6)+String(LedState7)+String(LedState8);
-        client.publish("esp32_to_rasp4", all_state.c_str());
+        if (client.connected()){
+          client.publish("esp32_to_rasp4", all_state.c_str());
+        }
         Serial.print("\nPublish 4: \n");
         Serial.print(all_state.c_str());
         digitalWrite(led4, LedState4);
@@ -290,7 +298,9 @@ void btn_5() {
       if (buttonState5 == HIGH) {
         LedState5 = !LedState5;
         String all_state = String(LedState1)+String(LedState2)+String(LedState3)+String(LedState4)+String(LedState5)+String(LedState6)+String(LedState7)+String(LedState8);
-        client.publish("esp32_to_rasp4", all_state.c_str());
+        if (client.connected()){
+          client.publish("esp32_to_rasp4", all_state.c_str());
+        }
         Serial.print("\nPublish 5: \n");
         Serial.print(all_state.c_str());
         digitalWrite(led5, LedState5);
@@ -313,7 +323,9 @@ void btn_6() {
       if (buttonState6 == HIGH) {
         LedState6 = !LedState6;
         String all_state = String(LedState1)+String(LedState2)+String(LedState3)+String(LedState4)+String(LedState5)+String(LedState6)+String(LedState7)+String(LedState8);
-        client.publish("esp32_to_rasp4", all_state.c_str());
+        if (client.connected()){
+          client.publish("esp32_to_rasp4", all_state.c_str());
+        }
         Serial.print("\nPublish 6: \n");
         Serial.print(all_state.c_str());
         digitalWrite(led6, LedState6);
@@ -336,7 +348,9 @@ void btn_7() {
       if (buttonState7 == HIGH) {
         LedState7 = !LedState7;
         String all_state = String(LedState1)+String(LedState2)+String(LedState3)+String(LedState4)+String(LedState5)+String(LedState6)+String(LedState7)+String(LedState8);
-        client.publish("esp32_to_rasp4", all_state.c_str());
+        if (client.connected()){
+          client.publish("esp32_to_rasp4", all_state.c_str());
+        }
         Serial.print("\nPublish 7: \n");
         Serial.print(all_state.c_str());
         digitalWrite(led7, LedState7);
@@ -359,7 +373,9 @@ void btn_8() {
       if (buttonState8 == HIGH) {
         LedState8 = !LedState8;
         String all_state = String(LedState1)+String(LedState2)+String(LedState3)+String(LedState4)+String(LedState5)+String(LedState6)+String(LedState7)+String(LedState8);
-        client.publish("esp32_to_rasp4", all_state.c_str());
+        if (client.connected()){
+          client.publish("esp32_to_rasp4", all_state.c_str());
+        }
         Serial.print("\nPublish 8: \n");
         Serial.print(all_state.c_str());
         digitalWrite(led8, LedState8);
@@ -380,7 +396,9 @@ void btn_9() {
     if (reading != buttonState9) {
       buttonState9 = reading;
       if (buttonState9 == HIGH) {
-        client.publish("esp32_to_rasp4", "0");
+        if (client.connected()){
+          client.publish("esp32_to_rasp4", "0");
+        }
         Serial.print("\nTurn off hand gesture mode\n");
         //code here
       }
@@ -453,7 +471,17 @@ void loop()
         lastReconnectAttempt = 0;
       }
     }
-  } else {
+    btn_1();
+    btn_2();
+    btn_3();
+    btn_4();
+    btn_5();
+    btn_6();
+    btn_7();
+    btn_8();
+    btn_9();
+  } 
+  else {
     btn_1();
     btn_2();
     btn_3();

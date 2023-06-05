@@ -20,9 +20,7 @@ prev_device_status = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0}
 
 def mainx(queue):
 
-    cbbox_value = ("No use","Zero","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten","Eleven","Twelve")
-
-
+    cbbox_value = ("No use","Zero","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten","Eleven")
 
     def toggle_image(button):
         global device_status
@@ -149,6 +147,10 @@ def mainx(queue):
     living_room_on = Image.open("img/living_room_on.png")
     living_room_on = living_room_on.resize((90,100), Image.LANCZOS)
     living_room_on = ImageTk.PhotoImage(living_room_on)
+
+    no_use = Image.open("img/no_use.png")
+    no_use = no_use.resize((90,100), Image.LANCZOS)
+    no_use = ImageTk.PhotoImage(no_use)
     ###################################################################################
 
     # create main frame for window
@@ -206,30 +208,38 @@ def mainx(queue):
 
     #room1 frame###############################
     # Merge cells in the device frame and add text
-    label = ttk.Label(room1_frame, text="HOẶC CHÍ TRUNG - NGUYỄN GIA HƯNG\n ELECTRONIC DEVICES CONTROL SYSTEM USING HAND GESTURE RECOGNITION\nHo Chi Minh City University of Technology and Education", font=("Arial", 8), anchor="center", justify="center")
+    label = ttk.Label(room1_frame, text="HOẶC CHÍ TRUNG\n ELECTRONIC DEVICES CONTROL SYSTEM USING HAND GESTURE RECOGNITION\nHo Chi Minh City University of Technology and Education", font=("Arial", 8), anchor="center", justify="center")
     label.grid(row=0, column=1, ipadx=0, ipady=10, padx=5, pady=5, sticky="nsew", columnspan=4)
     label.configure(background="white")
 
     def room1_1_1(event):
         selected_value = room1_cbbox_1_1.get()
+        if selected_value == 'Zero':
+            image_path = f"img/h0.jpg"
         if selected_value == 'One':
-            image_path = f"img/One.png"
+            image_path = f"img/h1.jpg"
         elif selected_value == 'Two':
-            image_path = 'img/Two.png'
+            image_path = 'img/h2.jpg'
         elif selected_value == 'Three':
-            image_path = 'img/Three.png'
+            image_path = 'img/h3.jpg'
         elif selected_value == 'Four':
-            image_path = 'img/Four.png'
+            image_path = 'img/h4.jpg'
         elif selected_value == 'Five':
-            image_path = 'img/Five.png'
+            image_path = 'img/h5.jpg'
         elif selected_value == 'Six':
-            image_path = 'img/Six.png'
+            image_path = 'img/h6.jpg'
         elif selected_value == 'Seven':
-            image_path = 'img/Seven.png'
+            image_path = 'img/h7.jpg'
         elif selected_value == 'Eight':
-            image_path = 'img/Eight.png'
-        else:
-            image_path = 'img/light_off.png'
+            image_path = 'img/h8.jpg'
+        if selected_value == 'Nine':
+            image_path = f"img/h9.jpg"
+        if selected_value == 'Ten':
+            image_path = f"img/h10.jpg"
+        if selected_value == 'Eleven':
+            image_path = f"img/h11.jpg"
+        if selected_value == 'No use':        
+            image_path = f"img/no_use.png"
 
         current_image = Image.open(image_path)
         current_image = current_image.resize((90,100), Image.LANCZOS)
@@ -240,24 +250,32 @@ def mainx(queue):
 
     def room1_1_2(event):
         selected_value = room1_cbbox_1_2.get()
+        if selected_value == 'Zero':
+            image_path = f"img/h0.jpg"
         if selected_value == 'One':
-            image_path = f"img/One.png"
+            image_path = f"img/h1.jpg"
         elif selected_value == 'Two':
-            image_path = 'img/Two.png'
+            image_path = 'img/h2.jpg'
         elif selected_value == 'Three':
-            image_path = 'img/Three.png'
+            image_path = 'img/h3.jpg'
         elif selected_value == 'Four':
-            image_path = 'img/Four.png'
+            image_path = 'img/h4.jpg'
         elif selected_value == 'Five':
-            image_path = 'img/Five.png'
+            image_path = 'img/h5.jpg'
         elif selected_value == 'Six':
-            image_path = 'img/Six.png'
+            image_path = 'img/h6.jpg'
         elif selected_value == 'Seven':
-            image_path = 'img/Seven.png'
+            image_path = 'img/h7.jpg'
         elif selected_value == 'Eight':
-            image_path = 'img/Eight.png'
-        else:
-            image_path = 'img/light_off.png'
+            image_path = 'img/h8.jpg'
+        if selected_value == 'Nine':
+            image_path = f"img/h9.jpg"
+        if selected_value == 'Ten':
+            image_path = f"img/h10.jpg"
+        if selected_value == 'Eleven':
+            image_path = f"img/h11.jpg"
+        if selected_value == 'No use':        
+            image_path = f"img/no_use.png"
 
         current_image = Image.open(image_path)
         current_image = current_image.resize((90,100), Image.LANCZOS)
@@ -268,24 +286,32 @@ def mainx(queue):
 
     def room1_1_3(event):
         selected_value = room1_cbbox_1_3.get()
+        if selected_value == 'Zero':
+            image_path = f"img/h0.jpg"
         if selected_value == 'One':
-            image_path = f"img/One.png"
+            image_path = f"img/h1.jpg"
         elif selected_value == 'Two':
-            image_path = 'img/Two.png'
+            image_path = 'img/h2.jpg'
         elif selected_value == 'Three':
-            image_path = 'img/Three.png'
+            image_path = 'img/h3.jpg'
         elif selected_value == 'Four':
-            image_path = 'img/Four.png'
+            image_path = 'img/h4.jpg'
         elif selected_value == 'Five':
-            image_path = 'img/Five.png'
+            image_path = 'img/h5.jpg'
         elif selected_value == 'Six':
-            image_path = 'img/Six.png'
+            image_path = 'img/h6.jpg'
         elif selected_value == 'Seven':
-            image_path = 'img/Seven.png'
+            image_path = 'img/h7.jpg'
         elif selected_value == 'Eight':
-            image_path = 'img/Eight.png'
-        else:
-            image_path = 'img/light_off.png'
+            image_path = 'img/h8.jpg'
+        if selected_value == 'Nine':
+            image_path = f"img/h9.jpg"
+        if selected_value == 'Ten':
+            image_path = f"img/h10.jpg"
+        if selected_value == 'Eleven':
+            image_path = f"img/h11.jpg"
+        if selected_value == 'No use':        
+            image_path = f"img/no_use.png"
 
         current_image = Image.open(image_path)
         current_image = current_image.resize((90,100), Image.LANCZOS)
@@ -296,24 +322,32 @@ def mainx(queue):
 
     def room1_1_4(event):
         selected_value = room1_cbbox_1_4.get()
+        if selected_value == 'Zero':
+            image_path = f"img/h0.jpg"
         if selected_value == 'One':
-            image_path = f"img/One.png"
+            image_path = f"img/h1.jpg"
         elif selected_value == 'Two':
-            image_path = 'img/Two.png'
+            image_path = 'img/h2.jpg'
         elif selected_value == 'Three':
-            image_path = 'img/Three.png'
+            image_path = 'img/h3.jpg'
         elif selected_value == 'Four':
-            image_path = 'img/Four.png'
+            image_path = 'img/h4.jpg'
         elif selected_value == 'Five':
-            image_path = 'img/Five.png'
+            image_path = 'img/h5.jpg'
         elif selected_value == 'Six':
-            image_path = 'img/Six.png'
+            image_path = 'img/h6.jpg'
         elif selected_value == 'Seven':
-            image_path = 'img/Seven.png'
+            image_path = 'img/h7.jpg'
         elif selected_value == 'Eight':
-            image_path = 'img/Eight.png'
-        else:
-            image_path = 'img/light_off.png'
+            image_path = 'img/h8.jpg'
+        if selected_value == 'Nine':
+            image_path = f"img/h9.jpg"
+        if selected_value == 'Ten':
+            image_path = f"img/h10.jpg"
+        if selected_value == 'Eleven':
+            image_path = f"img/h11.jpg"
+        if selected_value == 'No use':        
+            image_path = f"img/no_use.png"
 
         current_image = Image.open(image_path)
         current_image = current_image.resize((90,100), Image.LANCZOS)
@@ -324,24 +358,32 @@ def mainx(queue):
 
     def room2_2_1(event):
         selected_value = room2_cbbox_2_1.get()
+        if selected_value == 'Zero':
+            image_path = f"img/h0.jpg"
         if selected_value == 'One':
-            image_path = f"img/One.png"
+            image_path = f"img/h1.jpg"
         elif selected_value == 'Two':
-            image_path = 'img/Two.png'
+            image_path = 'img/h2.jpg'
         elif selected_value == 'Three':
-            image_path = 'img/Three.png'
+            image_path = 'img/h3.jpg'
         elif selected_value == 'Four':
-            image_path = 'img/Four.png'
+            image_path = 'img/h4.jpg'
         elif selected_value == 'Five':
-            image_path = 'img/Five.png'
+            image_path = 'img/h5.jpg'
         elif selected_value == 'Six':
-            image_path = 'img/Six.png'
+            image_path = 'img/h6.jpg'
         elif selected_value == 'Seven':
-            image_path = 'img/Seven.png'
+            image_path = 'img/h7.jpg'
         elif selected_value == 'Eight':
-            image_path = 'img/Eight.png'
-        else:
-            image_path = 'img/light_off.png'
+            image_path = 'img/h8.jpg'
+        if selected_value == 'Nine':
+            image_path = f"img/h9.jpg"
+        if selected_value == 'Ten':
+            image_path = f"img/h10.jpg"
+        if selected_value == 'Eleven':
+            image_path = f"img/h11.jpg"
+        if selected_value == 'No use':        
+            image_path = f"img/no_use.png"
 
         current_image = Image.open(image_path)
         current_image = current_image.resize((90,100), Image.LANCZOS)
@@ -351,25 +393,32 @@ def mainx(queue):
         print(selected_value)
 
     def room2_2_2(event):
-        selected_value = room2_cbbox_2_2.get()
+        if selected_value == 'Zero':
+            image_path = f"img/h0.jpg"
         if selected_value == 'One':
-            image_path = f"img/One.png"
+            image_path = f"img/h1.jpg"
         elif selected_value == 'Two':
-            image_path = 'img/Two.png'
+            image_path = 'img/h2.jpg'
         elif selected_value == 'Three':
-            image_path = 'img/Three.png'
+            image_path = 'img/h3.jpg'
         elif selected_value == 'Four':
-            image_path = 'img/Four.png'
+            image_path = 'img/h4.jpg'
         elif selected_value == 'Five':
-            image_path = 'img/Five.png'
+            image_path = 'img/h5.jpg'
         elif selected_value == 'Six':
-            image_path = 'img/Six.png'
+            image_path = 'img/h6.jpg'
         elif selected_value == 'Seven':
-            image_path = 'img/Seven.png'
+            image_path = 'img/h7.jpg'
         elif selected_value == 'Eight':
-            image_path = 'img/Eight.png'
-        else:
-            image_path = 'img/light_off.png'
+            image_path = 'img/h8.jpg'
+        if selected_value == 'Nine':
+            image_path = f"img/h9.jpg"
+        if selected_value == 'Ten':
+            image_path = f"img/h10.jpg"
+        if selected_value == 'Eleven':
+            image_path = f"img/h11.jpg"
+        if selected_value == 'No use':        
+            image_path = f"img/no_use.png"
 
         current_image = Image.open(image_path)
         current_image = current_image.resize((90,100), Image.LANCZOS)
@@ -380,24 +429,32 @@ def mainx(queue):
 
     def room2_2_3(event):
         selected_value = room2_cbbox_2_3.get()
+        if selected_value == 'Zero':
+            image_path = f"img/h0.jpg"
         if selected_value == 'One':
-            image_path = f"img/One.png"
+            image_path = f"img/h1.jpg"
         elif selected_value == 'Two':
-            image_path = 'img/Two.png'
+            image_path = 'img/h2.jpg'
         elif selected_value == 'Three':
-            image_path = 'img/Three.png'
+            image_path = 'img/h3.jpg'
         elif selected_value == 'Four':
-            image_path = 'img/Four.png'
+            image_path = 'img/h4.jpg'
         elif selected_value == 'Five':
-            image_path = 'img/Five.png'
+            image_path = 'img/h5.jpg'
         elif selected_value == 'Six':
-            image_path = 'img/Six.png'
+            image_path = 'img/h6.jpg'
         elif selected_value == 'Seven':
-            image_path = 'img/Seven.png'
+            image_path = 'img/h7.jpg'
         elif selected_value == 'Eight':
-            image_path = 'img/Eight.png'
-        else:
-            image_path = 'img/light_off.png'
+            image_path = 'img/h8.jpg'
+        if selected_value == 'Nine':
+            image_path = f"img/h9.jpg"
+        if selected_value == 'Ten':
+            image_path = f"img/h10.jpg"
+        if selected_value == 'Eleven':
+            image_path = f"img/h11.jpg"
+        if selected_value == 'No use':        
+            image_path = f"img/no_use.png"
 
         current_image = Image.open(image_path)
         current_image = current_image.resize((90,100), Image.LANCZOS)
@@ -408,24 +465,32 @@ def mainx(queue):
 
     def room2_2_4(event):
         selected_value = room2_cbbox_2_4.get()
+        if selected_value == 'Zero':
+            image_path = f"img/h0.jpg"
         if selected_value == 'One':
-            image_path = f"img/One.png"
+            image_path = f"img/h1.jpg"
         elif selected_value == 'Two':
-            image_path = 'img/Two.png'
+            image_path = 'img/h2.jpg'
         elif selected_value == 'Three':
-            image_path = 'img/Three.png'
+            image_path = 'img/h3.jpg'
         elif selected_value == 'Four':
-            image_path = 'img/Four.png'
+            image_path = 'img/h4.jpg'
         elif selected_value == 'Five':
-            image_path = 'img/Five.png'
+            image_path = 'img/h5.jpg'
         elif selected_value == 'Six':
-            image_path = 'img/Six.png'
+            image_path = 'img/h6.jpg'
         elif selected_value == 'Seven':
-            image_path = 'img/Seven.png'
+            image_path = 'img/h7.jpg'
         elif selected_value == 'Eight':
-            image_path = 'img/Eight.png'
-        else:
-            image_path = 'img/light_off.png'
+            image_path = 'img/h8.jpg'
+        if selected_value == 'Nine':
+            image_path = f"img/h9.jpg"
+        if selected_value == 'Ten':
+            image_path = f"img/h10.jpg"
+        if selected_value == 'Eleven':
+            image_path = f"img/h11.jpg"
+        if selected_value == 'No use':        
+            image_path = f"img/no_use.png"
 
         current_image = Image.open(image_path)
         current_image = current_image.resize((90,100), Image.LANCZOS)
@@ -446,7 +511,7 @@ def mainx(queue):
     room1_cbbox_1_1.pack(anchor="n", pady=10) 
     room1_cbbox_1_1.set("One")
     room1_cbbox_1_1.bind('<<ComboboxSelected>>', room1_1_1)
-    room1_img_1_1 = ttk.Label(room1_frame_1_1, image=living_room_on)
+    room1_img_1_1 = ttk.Label(room1_frame_1_1, image=no_use)
     room1_img_1_1.config(anchor='center')
     room1_img_1_1.pack( expand=True)
     room1_img_1_1.configure(background="white")
@@ -462,7 +527,7 @@ def mainx(queue):
     room1_cbbox_1_2.pack(anchor="n", pady=10) 
     room1_cbbox_1_2.set("Two")
     room1_cbbox_1_2.bind('<<ComboboxSelected>>', room1_1_2)
-    room1_img_1_2 = ttk.Label(room1_frame_1_2, image=living_room_on)
+    room1_img_1_2 = ttk.Label(room1_frame_1_2, image=no_use)
     room1_img_1_2.config(anchor='center')
     room1_img_1_2.pack( expand=True)
     room1_img_1_2.configure(background="white")
@@ -479,7 +544,7 @@ def mainx(queue):
     room1_cbbox_1_3.pack(anchor="n", pady=10) 
     room1_cbbox_1_3.set("Three")
     room1_cbbox_1_3.bind('<<ComboboxSelected>>', room1_1_3)
-    room1_img_1_3 = ttk.Label(room1_frame_1_3, image=living_room_on)
+    room1_img_1_3 = ttk.Label(room1_frame_1_3, image=no_use)
     room1_img_1_3.config(anchor='center')
     room1_img_1_3.pack( expand=True)
     room1_img_1_3.configure(background="white")
@@ -495,7 +560,7 @@ def mainx(queue):
     room1_cbbox_1_4.pack(anchor="n", pady=10) 
     room1_cbbox_1_4.set("Four")
     room1_cbbox_1_4.bind('<<ComboboxSelected>>', room1_1_4)
-    room1_img_1_4 = ttk.Label(room1_frame_1_4, image=living_room_on)
+    room1_img_1_4 = ttk.Label(room1_frame_1_4, image=no_use)
     room1_img_1_4.config(anchor='center')
     room1_img_1_4.pack( expand=True)
     room1_img_1_4.configure(background="white")
@@ -519,7 +584,7 @@ def mainx(queue):
     room2_cbbox_2_1.pack(anchor="n", pady=10) 
     room2_cbbox_2_1.set("Five")
     room2_cbbox_2_1.bind('<<ComboboxSelected>>', room2_2_1)
-    room2_img_2_1 = ttk.Label(room2_frame_2_1, image=living_room_on)
+    room2_img_2_1 = ttk.Label(room2_frame_2_1, image=no_use)
     room2_img_2_1.config(anchor='center')
     room2_img_2_1.pack( expand=True)
     room2_img_2_1.configure(background="white")
@@ -535,7 +600,7 @@ def mainx(queue):
     room2_cbbox_2_2.pack(anchor="n", pady=10) 
     room2_cbbox_2_2.set("Six")
     room2_cbbox_2_2.bind('<<ComboboxSelected>>', room2_2_2)
-    room2_img_2_2 = ttk.Label(room2_frame_2_2, image=living_room_on)
+    room2_img_2_2 = ttk.Label(room2_frame_2_2, image=no_use)
     room2_img_2_2.config(anchor='center')
     room2_img_2_2.pack( expand=True)
     room2_img_2_2.configure(background="white")
@@ -552,7 +617,7 @@ def mainx(queue):
     room2_cbbox_2_3.pack(anchor="n", pady=10) 
     room2_cbbox_2_3.set("Seven")
     room2_cbbox_2_3.bind('<<ComboboxSelected>>', room2_2_3)
-    room2_img_2_3 = ttk.Label(room2_frame_2_3, image=living_room_on)
+    room2_img_2_3 = ttk.Label(room2_frame_2_3, image=no_use)
     room2_img_2_3.config(anchor='center')
     room2_img_2_3.pack( expand=True)
     room2_img_2_3.configure(background="white")
@@ -569,7 +634,7 @@ def mainx(queue):
     room2_cbbox_2_4.pack(anchor="n", pady=10) 
     room2_cbbox_2_4.set("Eight")
     room2_cbbox_2_4.bind('<<ComboboxSelected>>', room2_2_4)
-    room2_img_2_4 = ttk.Label(room2_frame_2_4, image=living_room_on)
+    room2_img_2_4 = ttk.Label(room2_frame_2_4, image=no_use)
     room2_img_2_4.config(anchor='center')
     room2_img_2_4.pack( expand=True)
     room2_img_2_4.configure(background="white")
