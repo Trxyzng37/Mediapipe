@@ -17,6 +17,7 @@ import paho.mqtt.client as mqtt
 received_message = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0}
 device_status = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0}
 prev_device_status = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0}
+prev_hand_gesture = [0,0,0,0,0,0,0,0]
 
 def mainx(queue):
 
@@ -55,7 +56,7 @@ def mainx(queue):
             print("Same status as before")
         else:
             msg = str(device_status[1])+str(device_status[2])+str(device_status[3])+str(device_status[4])+str(device_status[5])+str(device_status[6])+str(device_status[7])+str(device_status[8])
-            mqtt_client.publish("rasp4_to_esp32", str(msg), qos=2, retain=True)
+            mqtt_client.publish("rasp4_to_esp32", str(msg), qos=2, retain=False)
             prev_device_status = device_status.copy()
             print("Publish to mqtt: \n" + str(msg))
             print("...........................................\n")
@@ -156,7 +157,13 @@ def mainx(queue):
     # create main frame for window
     choice_frame = tk.Frame(window)
     choice_frame.grid(row=0, column=0, sticky="nsew")
+    no1_frame = tk.Frame(window)
+    no1_frame.grid(row=0, column=0, sticky="nsew")
+    choice_frame.tkraise()
+    
     # create frame for room 1
+    no2_frame = tk.Frame(window)
+    no2_frame.grid(row=0, column=1, sticky="nsew")
     room1_frame = tk.Frame(window)
     room1_frame.grid(row=0, column=1, sticky="nsew")
     # create frame for room 2
@@ -205,10 +212,12 @@ def mainx(queue):
     button2.grid(row=1, column=0, padx=5, pady=5, sticky="nsew")
     button2.configure(command=lambda btn2=button2, btn1=button1: switch_to_room2(btn1,btn2))
 
-
+    label = ttk.Label(no2_frame, text="ONE OF THE BLOCK \nIS NOT CONNECTED TO INTERNET\nCHECK INTERNET", font=("Arial", 40), anchor="center", justify="center")
+    label.grid(row=0, column=0, ipadx=0, ipady=10, padx=5, pady=5, sticky="nsew")
+    label.configure(background="red")
     #room1 frame###############################
     # Merge cells in the device frame and add text
-    label = ttk.Label(room1_frame, text="HOẶC CHÍ TRUNG\n ELECTRONIC DEVICES CONTROL SYSTEM USING HAND GESTURE RECOGNITION\nHo Chi Minh City University of Technology and Education", font=("Arial", 8), anchor="center", justify="center")
+    label = ttk.Label(room1_frame, text="HOẶC CHÍ TRUNG - NGUYỄN GIA HƯNG\n ELECTRONIC DEVICES CONTROL SYSTEM USING HAND GESTURE RECOGNITION\nHo Chi Minh City University of Technology and Education", font=("Arial", 8), anchor="center", justify="center")
     label.grid(row=0, column=1, ipadx=0, ipady=10, padx=5, pady=5, sticky="nsew", columnspan=4)
     label.configure(background="white")
 
@@ -393,6 +402,7 @@ def mainx(queue):
         print(selected_value)
 
     def room2_2_2(event):
+        selected_value = room2_cbbox_2_2.get()
         if selected_value == 'Zero':
             image_path = f"img/h0.jpg"
         if selected_value == 'One':
@@ -509,7 +519,7 @@ def mainx(queue):
     room1_btn_1_1.pack(side="top", ipadx=5, ipady=5)
     room1_cbbox_1_1 = ttk.Combobox(room1_frame_1_1, font="Verdana 20 bold", width=8, justify="center", textvariable=room1_cbbox_1_1_str, state="readonly", values=cbbox_value)
     room1_cbbox_1_1.pack(anchor="n", pady=10) 
-    room1_cbbox_1_1.set("One")
+    room1_cbbox_1_1.set("No use")
     room1_cbbox_1_1.bind('<<ComboboxSelected>>', room1_1_1)
     room1_img_1_1 = ttk.Label(room1_frame_1_1, image=no_use)
     room1_img_1_1.config(anchor='center')
@@ -525,7 +535,7 @@ def mainx(queue):
     room1_btn_1_2.pack(side="top", ipadx=5, ipady=5)
     room1_cbbox_1_2 = ttk.Combobox(room1_frame_1_2, font="Verdana 20 bold", width=8, justify="center", textvariable=room1_cbbox_1_2_str, state="readonly", values=cbbox_value)
     room1_cbbox_1_2.pack(anchor="n", pady=10) 
-    room1_cbbox_1_2.set("Two")
+    room1_cbbox_1_2.set("No use")
     room1_cbbox_1_2.bind('<<ComboboxSelected>>', room1_1_2)
     room1_img_1_2 = ttk.Label(room1_frame_1_2, image=no_use)
     room1_img_1_2.config(anchor='center')
@@ -542,7 +552,7 @@ def mainx(queue):
     room1_btn_1_3.pack(side="top", ipadx=5, ipady=5)
     room1_cbbox_1_3 = ttk.Combobox(room1_frame_1_3, font="Verdana 20 bold", width=8, justify="center", textvariable=room1_cbbox_1_3_str, state="readonly", values=cbbox_value)
     room1_cbbox_1_3.pack(anchor="n", pady=10) 
-    room1_cbbox_1_3.set("Three")
+    room1_cbbox_1_3.set("No use")
     room1_cbbox_1_3.bind('<<ComboboxSelected>>', room1_1_3)
     room1_img_1_3 = ttk.Label(room1_frame_1_3, image=no_use)
     room1_img_1_3.config(anchor='center')
@@ -558,7 +568,7 @@ def mainx(queue):
     room1_btn_1_4.pack(side="top", ipadx=5, ipady=5)
     room1_cbbox_1_4 = ttk.Combobox(room1_frame_1_4, font="Verdana 20 bold", width=8, justify="center", textvariable=room1_cbbox_1_4_str, state="readonly", values=cbbox_value)
     room1_cbbox_1_4.pack(anchor="n", pady=10) 
-    room1_cbbox_1_4.set("Four")
+    room1_cbbox_1_4.set("No use")
     room1_cbbox_1_4.bind('<<ComboboxSelected>>', room1_1_4)
     room1_img_1_4 = ttk.Label(room1_frame_1_4, image=no_use)
     room1_img_1_4.config(anchor='center')
@@ -582,7 +592,7 @@ def mainx(queue):
     room2_btn_2_1.pack(side="top", ipadx=5, ipady=5)
     room2_cbbox_2_1 = ttk.Combobox(room2_frame_2_1, font="Verdana 20 bold", width=8, justify="center", textvariable=room2_cbbox_2_1_str, state="readonly", values=cbbox_value)
     room2_cbbox_2_1.pack(anchor="n", pady=10) 
-    room2_cbbox_2_1.set("Five")
+    room2_cbbox_2_1.set("No use")
     room2_cbbox_2_1.bind('<<ComboboxSelected>>', room2_2_1)
     room2_img_2_1 = ttk.Label(room2_frame_2_1, image=no_use)
     room2_img_2_1.config(anchor='center')
@@ -598,7 +608,7 @@ def mainx(queue):
     room2_btn_2_2.pack(side="top", ipadx=5, ipady=5)
     room2_cbbox_2_2 = ttk.Combobox(room2_frame_2_2, font="Verdana 20 bold", width=8, justify="center", textvariable=room2_cbbox_2_2_str, state="readonly", values=cbbox_value)
     room2_cbbox_2_2.pack(anchor="n", pady=10) 
-    room2_cbbox_2_2.set("Six")
+    room2_cbbox_2_2.set("No use")
     room2_cbbox_2_2.bind('<<ComboboxSelected>>', room2_2_2)
     room2_img_2_2 = ttk.Label(room2_frame_2_2, image=no_use)
     room2_img_2_2.config(anchor='center')
@@ -615,7 +625,7 @@ def mainx(queue):
     room2_btn_2_3.pack(side="top", ipadx=5, ipady=5)
     room2_cbbox_2_3 = ttk.Combobox(room2_frame_2_3, font="Verdana 20 bold", width=8, justify="center", textvariable=room2_cbbox_2_3_str, state="readonly", values=cbbox_value)
     room2_cbbox_2_3.pack(anchor="n", pady=10) 
-    room2_cbbox_2_3.set("Seven")
+    room2_cbbox_2_3.set("No use")
     room2_cbbox_2_3.bind('<<ComboboxSelected>>', room2_2_3)
     room2_img_2_3 = ttk.Label(room2_frame_2_3, image=no_use)
     room2_img_2_3.config(anchor='center')
@@ -632,7 +642,7 @@ def mainx(queue):
     room2_btn_2_4.pack(side="top", ipadx=5, ipady=5)
     room2_cbbox_2_4 = ttk.Combobox(room2_frame_2_4, font="Verdana 20 bold", width=8, justify="center", textvariable=room2_cbbox_2_4_str, state="readonly", values=cbbox_value)
     room2_cbbox_2_4.pack(anchor="n", pady=10) 
-    room2_cbbox_2_4.set("Eight")
+    room2_cbbox_2_4.set("No use")
     room2_cbbox_2_4.bind('<<ComboboxSelected>>', room2_2_4)
     room2_img_2_4 = ttk.Label(room2_frame_2_4, image=no_use)
     room2_img_2_4.config(anchor='center')
@@ -721,15 +731,21 @@ def mainx(queue):
     # Start the updates
     receive_hand_gesture(queue, comboboxes, devices_btn, device_img_off, device_img_on)
 
+
     def on_connect(client, userdata, flags, rc):
         if rc == 0:
             print("Connection successful")
+            mqtt_client.publish("trxyzng_r_status", "ron", qos=2, retain=True)
+            room1_frame.tkraise()
+            choice_frame.tkraise()
         else:
             print("Connection failed")
 
     def on_disconnect(client, userdata, rc):
         print("Disconnected from MQTT broker.\n")
         print("Atempt to reconnect................")
+        no1_frame.tkraise()
+        no2_frame.tkraise()
 
     def on_message(client, userdata, message):
         global received_message
@@ -752,6 +768,14 @@ def mainx(queue):
             process_received_message()
         else:
             if msg == "0":
+                prev_hand_gesture[0] = room1_cbbox_1_1.get()
+                prev_hand_gesture[1] = room1_cbbox_1_2.get()
+                prev_hand_gesture[2] = room1_cbbox_1_3.get()
+                prev_hand_gesture[3] = room1_cbbox_1_4.get()
+                prev_hand_gesture[4] = room2_cbbox_2_1.get()
+                prev_hand_gesture[5] = room2_cbbox_2_2.get()
+                prev_hand_gesture[6] = room2_cbbox_2_3.get()
+                prev_hand_gesture[7] = room2_cbbox_2_4.get()
                 room1_cbbox_1_1.set("No use")
                 room1_cbbox_1_2.set("No use")
                 room1_cbbox_1_3.set("No use")
@@ -760,6 +784,111 @@ def mainx(queue):
                 room2_cbbox_2_2.set("No use")
                 room2_cbbox_2_3.set("No use")
                 room2_cbbox_2_4.set("No use")
+                room1_img_1_1.configure(image=no_use)
+                room1_img_1_1.image = no_use
+                room1_img_1_2.configure(image=no_use)
+                room1_img_1_2.image = no_use
+                room1_img_1_3.configure(image=no_use)
+                room1_img_1_3.image = no_use
+                room1_img_1_4.configure(image=no_use)
+                room1_img_1_4.image = no_use
+                room2_img_2_1.configure(image=no_use)
+                room2_img_2_1.image = no_use
+                room2_img_2_2.configure(image=no_use)
+                room2_img_2_2.image = no_use
+                room2_img_2_3.configure(image=no_use)
+                room2_img_2_3.image = no_use
+                room2_img_2_4.configure(image=no_use)
+                room2_img_2_4.image = no_use
+                pre = ""
+                for i in range(len(prev_hand_gesture)):
+                    pre = pre + prev_hand_gesture[i]
+                print("Previous gesture: "+pre+"\n")
+            elif msg == "1":
+                if room1_cbbox_1_1.get() != "No use":
+                    pass
+                else:
+                    room1_cbbox_1_1.set(prev_hand_gesture[0])
+                    change_hand(room1_cbbox_1_1, room1_img_1_1)
+                if room1_cbbox_1_2.get() != "No use":
+                    pass
+                else:
+                    room1_cbbox_1_2.set(prev_hand_gesture[1])
+                    change_hand(room1_cbbox_1_2, room1_img_1_2) 
+                if room1_cbbox_1_3.get() != "No use":
+                    pass
+                else:
+                    room1_cbbox_1_3.set(prev_hand_gesture[2])
+                    change_hand(room1_cbbox_1_3, room1_img_1_3)  
+                if room1_cbbox_1_4.get() != "No use":
+                    pass
+                else:
+                    room1_cbbox_1_4.set(prev_hand_gesture[3])
+                    change_hand(room1_cbbox_1_4, room1_img_1_4)             
+                if room2_cbbox_2_1.get() != "No use":
+                    pass
+                else:
+                    room2_cbbox_2_1.set(prev_hand_gesture[4])
+                    change_hand(room2_cbbox_2_1, room2_img_2_1)
+                if room2_cbbox_2_2.get() != "No use":
+                    pass
+                else:
+                    room2_cbbox_2_2.set(prev_hand_gesture[5])
+                    change_hand(room2_cbbox_2_2, room2_img_2_2)
+                if room2_cbbox_2_3.get() != "No use":
+                    pass
+                else:
+                    room2_cbbox_2_3.set(prev_hand_gesture[6])
+                    change_hand(room2_cbbox_2_3, room2_img_2_3)  
+                if room2_cbbox_2_4.get() != "No use":
+                    pass
+                else:
+                    room2_cbbox_2_4.set(prev_hand_gesture[7])
+                    change_hand(room2_cbbox_2_4, room2_img_2_4)              
+
+            elif msg == "on":
+                choice_frame.tkraise()
+                room1_frame.tkraise()
+            elif msg == "off":
+                no1_frame.tkraise()
+                no2_frame.tkraise()                
+
+    def change_hand(ccbox, img):
+        image_path = f"img/no_use.png"
+        selected_value = ccbox.get()
+        if selected_value == 'Zero':
+            image_path = f"img/h0.jpg"
+        if selected_value == 'One':
+            image_path = f"img/h1.jpg"
+        elif selected_value == 'Two':
+            image_path = 'img/h2.jpg'
+        elif selected_value == 'Three':
+            image_path = 'img/h3.jpg'
+        elif selected_value == 'Four':
+            image_path = 'img/h4.jpg'
+        elif selected_value == 'Five':
+            image_path = 'img/h5.jpg'
+        elif selected_value == 'Six':
+            image_path = 'img/h6.jpg'
+        elif selected_value == 'Seven':
+            image_path = 'img/h7.jpg'
+        elif selected_value == 'Eight':
+            image_path = 'img/h8.jpg'
+        if selected_value == 'Nine':
+            image_path = f"img/h9.jpg"
+        if selected_value == 'Ten':
+            image_path = f"img/h10.jpg"
+        if selected_value == 'Eleven':
+            image_path = f"img/h11.jpg"
+        if selected_value == 'No use':        
+            image_path = f"img/no_use.png"
+
+        current_image = Image.open(image_path)
+        current_image = current_image.resize((90,100), Image.LANCZOS)
+        current_image = ImageTk.PhotoImage(current_image)
+        img.configure(image=current_image)
+        img.image = current_image
+        print(selected_value)
 
 
     def connect_to_mqtt():
@@ -768,13 +897,15 @@ def mainx(queue):
         user = "test"                                #user name to connect to server
         password = "test"                            #password to connect to server
         topic = "rasp4_to_esp32"                               #main topic
-        client = mqtt.Client(client_id="hoacchitrung", clean_session=True, userdata=None, protocol=mqtt.MQTTv311, transport="tcp") #create new client
+        client = mqtt.Client(client_id="hoacchitrung", clean_session=False, userdata=None, protocol=mqtt.MQTTv311, transport="tcp") #create new client
         client.username_pw_set(user,password)     #user and password for connect
         print("Connecting to broker...")          #print to console
-        client.connect(broker_address, port, 5)   #connect to broker with keep alive time = 5s
+        client.will_set("trxyzng_r_status", "roff", 2, True)
+        client.connect(broker_address, port, 2)   #connect to broker with keep alive time = 5s
         client.on_connect = on_connect
         client.on_disconnect = on_disconnect
         client.subscribe("esp32_to_rasp4", qos=2)
+        client.subscribe("trxyzng_status", qos=2)
         client.on_message = on_message
         client.loop_start()
         return client

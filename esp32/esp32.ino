@@ -13,28 +13,36 @@ const char* mqtt_server = "broker.hivemq.com";        //mqtt server address
 char msg[msg_size];         //payload
 
 void setup_wifi() {
+  int time = millis();
   WiFi.begin(ssid, password);
   Serial.println("Try to connect to wifi");
-  while (WiFi.status() != WL_CONNECTED) {
+  while ((WiFi.status() != WL_CONNECTED) && ((millis() - time) < 5000)) {
     delay(500);
     Serial.print(".");
   }
-  Serial.println("");
-  Serial.println("WiFi connected");
-  Serial.println("IP address: ");
-  Serial.println(WiFi.localIP());
+  if (WiFi.status() == WL_CONNECTED){
+    Serial.println("");
+    Serial.println("WiFi connected");
+    Serial.println("IP address: ");
+    Serial.println(WiFi.localIP());
+  }
+  else {
+    Serial.println("Connect wifi fail.");
+  }
 }
 
 void setup_mqtt() {
-  while (!client.connected()) {
+  int time = millis();
+  while ((!client.connected()) && ((millis() - time) < 2000)) {
     Serial.print("Attempting MQTT connection...");
     // Attempt to connect
-    if (client.connect("ESP32_hoacchitrung_nguyengiahung", NULL, NULL, "esp32_status", 2, true, "Esp32 disconnected", false)) {  //clientID, user, pass, willtopic, willqos, willretain, willmessage, clean session
+    if (client.connect("ESP32_hoacchitrung_nguyengiahung", NULL, NULL, "trxyzng_status", 2, true, "off", false)) {  //clientID, user, pass, willtopic, willqos, willretain, willmessage, clean session
       Serial.println("Connected to mqtt broker");                                                   //last will message is "Esp32 disconnected"
-      client.publish("esp32_status", "Esp32 connected", "true");
+      client.publish("trxyzng_status", "on", "true");
       client.subscribe("rasp4_to_esp32", 1);
+      client.subscribe("trxyzng_r_status", 1);
       Serial.println("Publish message: Esp32 connected");
-      //client.setKeepAlive(1.5);
+      client.setKeepAlive(2);
     } 
     else {
       Serial.print("failed, rc=");
@@ -87,8 +95,8 @@ unsigned long lastDebounceTime9 = 0;
 
 unsigned long debounceDelay = 50;
 
-const int led1 = 17;
-const int led2 = 25;
+const int led1 = 4;
+const int led2 = 17;
 const int led3 = 5;
 const int led4 = 18;
 const int led5 = 19;
@@ -104,6 +112,7 @@ int LedState5 = LOW;
 int LedState6 = LOW;
 int LedState7 = LOW;
 int LedState8 = LOW;
+int LedState9 = LOW;
 
 void callback(char* topic, byte* payload, unsigned int length) {
   String msg;
@@ -112,77 +121,84 @@ void callback(char* topic, byte* payload, unsigned int length) {
   };
   Serial.print("\nReceive: \n");
   Serial.print(msg);
-  if ((char)payload[0] == '1') {
-    LedState1 = HIGH;
-    digitalWrite(led1, LedState1);
-  }
-  else {
-    LedState1 = LOW;
-    digitalWrite(led1, LedState1);
-  }
+  if (msg.length() == 8) {
+    if ((char)payload[0] == '1') {
+      LedState1 = HIGH;
+      digitalWrite(led1, LedState1);
+    }
+    else {
+      LedState1 = LOW;
+      digitalWrite(led1, LedState1);
+    }
   
-  if ((char)payload[1] == '1') {
-    LedState2 = HIGH;
-    digitalWrite(led2, LedState2);
-  }
-  else {
-    LedState2 = LOW;
-    digitalWrite(led2, LedState2);
-    
-  }
+    if ((char)payload[1] == '1') {
+      LedState2 = HIGH;
+      digitalWrite(led2, LedState2);
+    }
+    else {
+      LedState2 = LOW;
+      digitalWrite(led2, LedState2);
+    }
   
-  if ((char)payload[2] == '1') {
-    LedState3 = HIGH;
-    digitalWrite(led3, LedState3);
-  }
-  else {
-    LedState3 = LOW;
-    digitalWrite(led3, LedState3);
-  }
+    if ((char)payload[2] == '1') {
+      LedState3 = HIGH;
+      digitalWrite(led3, LedState3);
+    }
+    else {
+      LedState3 = LOW;
+      digitalWrite(led3, LedState3);
+    }
   
-  if ((char)payload[3] == '1') {
-    LedState4 = HIGH;
-    digitalWrite(led4, LedState4);
-  }
-  else {
-    LedState4 = LOW;
-    digitalWrite(led4, LedState4);
-  }
+    if ((char)payload[3] == '1') {
+      LedState4 = HIGH;
+      digitalWrite(led4, LedState4);
+    }
+    else {
+      LedState4 = LOW;
+      digitalWrite(led4, LedState4);
+    }
   
-  if ((char)payload[4] == '1') {
-    LedState5 = HIGH;
-    digitalWrite(led5, LedState5);
-  }
-  else {
-    LedState5 = LOW;
-    digitalWrite(led5, LedState5);
-  }
+    if ((char)payload[4] == '1') {
+      LedState5 = HIGH;
+      digitalWrite(led5, LedState5);
+    }
+    else {
+      LedState5 = LOW;
+      digitalWrite(led5, LedState5);
+    }
   
-  if ((char)payload[5] == '1') {
-    LedState6 = HIGH;
-    digitalWrite(led6, LedState6);
-  }
-  else {
-    LedState6 = LOW;
-    digitalWrite(led6, LedState6);
-  }
+    if ((char)payload[5] == '1') {
+      LedState6 = HIGH;
+      digitalWrite(led6, LedState6);
+    }
+    else {
+      LedState6 = LOW;
+      digitalWrite(led6, LedState6);
+    }
 
-  if ((char)payload[6] == '1') {
-    LedState7 = HIGH;
-    digitalWrite(led7, LedState7);
-  }
-  else {
-    LedState7 = LOW;
-    digitalWrite(led7, LedState7);
-  }
+    if ((char)payload[6] == '1') {
+      LedState7 = HIGH;
+      digitalWrite(led7, LedState7);
+    }
+    else {
+      LedState7 = LOW;
+      digitalWrite(led7, LedState7);
+    }
 
-  if ((char)payload[7] == '1') {
-    LedState8 = HIGH;
-    digitalWrite(led8, LedState8);
+    if ((char)payload[7] == '1') {
+      LedState8 = HIGH;
+      digitalWrite(led8, LedState8);
+    }
+    else {
+      LedState8 = LOW;
+      digitalWrite(led8, LedState8);
+    }
   }
   else {
-    LedState8 = LOW;
-    digitalWrite(led8, LedState8);
+    if (msg == "ron"){
+      String all_state = String(LedState1)+String(LedState2)+String(LedState3)+String(LedState4)+String(LedState5)+String(LedState6)+String(LedState7)+String(LedState8);
+      client.publish("esp32_to_rasp4", all_state.c_str(), "false");
+    }
   }
 }
 
@@ -199,7 +215,7 @@ void btn_1() {
         LedState1 = !LedState1;
         String all_state = String(LedState1)+String(LedState2)+String(LedState3)+String(LedState4)+String(LedState5)+String(LedState6)+String(LedState7)+String(LedState8);
         if (client.connected()){
-          client.publish("esp32_to_rasp4", all_state.c_str());
+          client.publish("esp32_to_rasp4", all_state.c_str(), "false");
         }
         Serial.print("\nPublish 1: \n");
         Serial.print(all_state.c_str());
@@ -224,7 +240,7 @@ void btn_2() {
         LedState2 = !LedState2;
         String all_state = String(LedState1)+String(LedState2)+String(LedState3)+String(LedState4)+String(LedState5)+String(LedState6)+String(LedState7)+String(LedState8);
         if (client.connected()){
-          client.publish("esp32_to_rasp4", all_state.c_str());
+          client.publish("esp32_to_rasp4", all_state.c_str(), "false");
         }
         Serial.print("\nPublish 2: \n");
         Serial.print(all_state.c_str());
@@ -249,7 +265,7 @@ void btn_3() {
         LedState3 = !LedState3;
         String all_state = String(LedState1)+String(LedState2)+String(LedState3)+String(LedState4)+String(LedState5)+String(LedState6)+String(LedState7)+String(LedState8);
         if (client.connected()){
-          client.publish("esp32_to_rasp4", all_state.c_str());
+          client.publish("esp32_to_rasp4", all_state.c_str(), "false");
         }
         Serial.print("\nPublish 3: \n");
         Serial.print(all_state.c_str());
@@ -274,7 +290,7 @@ void btn_4() {
         LedState4 = !LedState4;
         String all_state = String(LedState1)+String(LedState2)+String(LedState3)+String(LedState4)+String(LedState5)+String(LedState6)+String(LedState7)+String(LedState8);
         if (client.connected()){
-          client.publish("esp32_to_rasp4", all_state.c_str());
+          client.publish("esp32_to_rasp4", all_state.c_str(), "false");
         }
         Serial.print("\nPublish 4: \n");
         Serial.print(all_state.c_str());
@@ -299,7 +315,7 @@ void btn_5() {
         LedState5 = !LedState5;
         String all_state = String(LedState1)+String(LedState2)+String(LedState3)+String(LedState4)+String(LedState5)+String(LedState6)+String(LedState7)+String(LedState8);
         if (client.connected()){
-          client.publish("esp32_to_rasp4", all_state.c_str());
+          client.publish("esp32_to_rasp4", all_state.c_str(), "false");
         }
         Serial.print("\nPublish 5: \n");
         Serial.print(all_state.c_str());
@@ -324,7 +340,7 @@ void btn_6() {
         LedState6 = !LedState6;
         String all_state = String(LedState1)+String(LedState2)+String(LedState3)+String(LedState4)+String(LedState5)+String(LedState6)+String(LedState7)+String(LedState8);
         if (client.connected()){
-          client.publish("esp32_to_rasp4", all_state.c_str());
+          client.publish("esp32_to_rasp4", all_state.c_str(), "false");
         }
         Serial.print("\nPublish 6: \n");
         Serial.print(all_state.c_str());
@@ -349,7 +365,7 @@ void btn_7() {
         LedState7 = !LedState7;
         String all_state = String(LedState1)+String(LedState2)+String(LedState3)+String(LedState4)+String(LedState5)+String(LedState6)+String(LedState7)+String(LedState8);
         if (client.connected()){
-          client.publish("esp32_to_rasp4", all_state.c_str());
+          client.publish("esp32_to_rasp4", all_state.c_str(), "false");
         }
         Serial.print("\nPublish 7: \n");
         Serial.print(all_state.c_str());
@@ -374,7 +390,7 @@ void btn_8() {
         LedState8 = !LedState8;
         String all_state = String(LedState1)+String(LedState2)+String(LedState3)+String(LedState4)+String(LedState5)+String(LedState6)+String(LedState7)+String(LedState8);
         if (client.connected()){
-          client.publish("esp32_to_rasp4", all_state.c_str());
+          client.publish("esp32_to_rasp4", all_state.c_str(), "false");
         }
         Serial.print("\nPublish 8: \n");
         Serial.print(all_state.c_str());
@@ -396,8 +412,9 @@ void btn_9() {
     if (reading != buttonState9) {
       buttonState9 = reading;
       if (buttonState9 == HIGH) {
+        LedState9 = !LedState9;
         if (client.connected()){
-          client.publish("esp32_to_rasp4", "0");
+          client.publish("esp32_to_rasp4", String(LedState9).c_str(), "false");
         }
         Serial.print("\nTurn off hand gesture mode\n");
         //code here
@@ -407,20 +424,9 @@ void btn_9() {
   lastButtonState9 = reading;
 }
 
-long lastReconnectAttempt = 0;
-
-//reconnect
-boolean reconnect() {
-  if (client.connect("esp32_rasp4")) {
-    // Once connected, publish an announcement...
-    client.publish("esp32_status","esp32 connected");
-    // ... and resubscribe
-    client.subscribe("rasp4_to_esp32", 1);
-  }
-  return client.connected();
-}
-
 int count = 0;
+int last_time = millis();
+
 void setup() {
   count = 0;
   Serial.begin(115200);
@@ -430,7 +436,6 @@ void setup() {
   setup_mqtt();
   client.subscribe("rasp4_to_esp32",1);
   client.setCallback(callback);
-  lastReconnectAttempt = 0;
   pinMode(btn1, INPUT_PULLUP);
   pinMode(btn2, INPUT_PULLUP);
   pinMode(btn3, INPUT_PULLUP);
@@ -449,28 +454,31 @@ void setup() {
   pinMode(led6, OUTPUT);
   pinMode(led7, OUTPUT);
   pinMode(led8, OUTPUT);
-
-  digitalWrite(led1, LOW);
-  digitalWrite(led2, LOW);
-  digitalWrite(led3, LOW);
-  digitalWrite(led4, LOW);
-  digitalWrite(led5, LOW);
-  digitalWrite(led6, LOW);
-  digitalWrite(led7, LOW);
-  digitalWrite(led8, LOW);
+  count=0;
+  last_time = millis();
 }
 
 void loop() 
 {
   if (!client.connected()) {
-    long now = millis();
-    if (now - lastReconnectAttempt > 1000) {
-      lastReconnectAttempt = now;
-      // Attempt to reconnect
-      if (reconnect()) {
-        lastReconnectAttempt = 0;
-      }
+    if ((WiFi.status() != WL_CONNECTED) && ((millis() - last_time) > 2000)) {
+      WiFi.disconnect();
+      //WiFi.begin(ssid, password);
+      WiFi.reconnect();
+      Serial.println("Reconnecting wifi...\n");
+      last_time = millis();
     }
+    if (client.connect("ESP32_hoacchitrung_nguyengiahung", NULL, NULL, "trxyzng_status", 2, true, "off", false)) {  //clientID, user, pass, willtopic, willqos, willretain, willmessage, clean session
+      Serial.println("Reconnected to mqtt broker");                                                   //last will message is "Esp32 disconnected"
+      client.publish("trxyzng_status", "on", "true");
+      String all_state = String(LedState1)+String(LedState2)+String(LedState3)+String(LedState4)+String(LedState5)+String(LedState6)+String(LedState7)+String(LedState8);
+      client.publish("esp32_to_rasp4", all_state.c_str(), "false");
+      client.subscribe("rasp4_to_esp32", 1);
+      client.subscribe("trxyzng_r_status", 1);
+      Serial.println("Publish message: Esp32 connected\n");
+      Serial.println(all_state);
+      client.setKeepAlive(2);
+    }   
     btn_1();
     btn_2();
     btn_3();
@@ -480,6 +488,27 @@ void loop()
     btn_7();
     btn_8();
     btn_9();
+    count++;
+    if (count==1){
+      digitalWrite(led1, LOW);
+      digitalWrite(led2, LOW);
+      digitalWrite(led3, LOW);
+      digitalWrite(led4, LOW);
+      digitalWrite(led5, LOW);
+      digitalWrite(led6, LOW);
+      digitalWrite(led7, LOW);
+      digitalWrite(led8, LOW);
+      LedState1 = 0;
+      LedState2 = 0;
+      LedState3 = 0;
+      LedState4 = 0;
+      LedState5 = 0;
+      LedState6 = 0;
+      LedState7 = 0;
+      LedState8 = 0;
+      LedState9 = 0;  
+    }
+    
   } 
   else {
     btn_1();
@@ -491,6 +520,27 @@ void loop()
     btn_7();
     btn_8();
     btn_9();
+    count++;
+    if (count==1){
+      client.publish("esp32_to_rasp4", "00000000", "false");
+      digitalWrite(led1, LOW);
+      digitalWrite(led2, LOW);
+      digitalWrite(led3, LOW);
+      digitalWrite(led4, LOW);
+      digitalWrite(led5, LOW);
+      digitalWrite(led6, LOW);
+      digitalWrite(led7, LOW);
+      digitalWrite(led8, LOW);
+      LedState1 = 0;
+      LedState2 = 0;
+      LedState3 = 0;
+      LedState4 = 0;
+      LedState5 = 0;
+      LedState6 = 0;
+      LedState7 = 0;
+      LedState8 = 0;  
+      LedState9 = 0;
+    }
     client.loop();
   }
 }
