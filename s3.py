@@ -846,7 +846,7 @@ def mainx(queue):
                     room2_cbbox_2_4.set(prev_hand_gesture[7])
                     change_hand(room2_cbbox_2_4, room2_img_2_4)              
 
-            elif msg == "on":
+            elif msg == "on" or msg == "ron":
                 choice_frame.tkraise()
                 room1_frame.tkraise()
             elif msg == "off":
@@ -897,7 +897,7 @@ def mainx(queue):
         user = "test"                                #user name to connect to server
         password = "test"                            #password to connect to server
         topic = "rasp4_to_esp32"                               #main topic
-        client = mqtt.Client(client_id="hoacchitrung", clean_session=False, userdata=None, protocol=mqtt.MQTTv311, transport="tcp") #create new client
+        client = mqtt.Client(client_id="hoacchitrung_nguyengiahung_37", clean_session=False, userdata=None, protocol=mqtt.MQTTv311, transport="tcp") #create new client
         client.username_pw_set(user,password)     #user and password for connect
         print("Connecting to broker...")          #print to console
         client.will_set("trxyzng_r_status", "roff", 2, True)
@@ -906,6 +906,7 @@ def mainx(queue):
         client.on_disconnect = on_disconnect
         client.subscribe("esp32_to_rasp4", qos=2)
         client.subscribe("trxyzng_status", qos=2)
+        client.subscribe("trxyzng_r_status", qos=2)
         client.on_message = on_message
         client.loop_start()
         return client
