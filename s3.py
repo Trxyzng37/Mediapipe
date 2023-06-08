@@ -18,9 +18,10 @@ received_message = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0}
 device_status = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0}
 prev_device_status = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0}
 prev_hand_gesture = [0,0,0,0,0,0,0,0]
+rasp_status = 0
+esp_status = 0
 
 def mainx(queue):
-
     cbbox_value = ("No use","Zero","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten","Eleven")
 
     def toggle_image(button):
@@ -83,8 +84,6 @@ def mainx(queue):
     #define the window
     window = tk.Tk()
     window.title("ELECTRONIC DEVICES CONTROL SYSTEM USING HAND GESTURE RECOGNITION")
-    screen_width = window.winfo_screenwidth()
-    screen_height = window.winfo_screenheight()
     #window.resizable(False,False)
     window.config(bg="white")
     #print(str(screen_width)+"|"+str(screen_height))
@@ -181,6 +180,8 @@ def mainx(queue):
     choice_frame.grid_rowconfigure(0, weight=1)
     choice_frame.grid_rowconfigure(1, weight=1)  
     choice_frame.grid_columnconfigure(0, weight=1)
+    no1_frame.grid_columnconfigure(0, weight=1)
+    no2_frame.grid_columnconfigure(0, weight=1)
 
     # grid for room 1
     room1_frame.grid_rowconfigure(0, weight=1)
@@ -212,9 +213,18 @@ def mainx(queue):
     button2.grid(row=1, column=0, padx=5, pady=5, sticky="nsew")
     button2.configure(command=lambda btn2=button2, btn1=button1: switch_to_room2(btn1,btn2))
 
-    label = ttk.Label(no2_frame, text="ONE OF THE BLOCK \nIS NOT CONNECTED TO INTERNET\nCHECK INTERNET", font=("Arial", 40), anchor="center", justify="center")
-    label.grid(row=0, column=0, ipadx=0, ipady=10, padx=5, pady=5, sticky="nsew")
-    label.configure(background="red")
+#no status
+    no_check = tk.StringVar()
+    no_check = "Main block = OFFLINE\nHost block = OFFLINE"
+    no1_label = ttk.Label(no1_frame, text="", font=("Arial", 40), anchor="center", justify="center")
+    no1_label.pack(fill=tk.BOTH, expand=True)
+    no1_label.configure(background="white")
+    no12_label = ttk.Label(no2_frame, text="\nSystem internet connection status\n", font=("Arial", 40), anchor="center", justify="center")
+    no12_label.pack(fill=tk.X)
+    no12_label.configure(background="white")
+    no2_label = ttk.Label(no2_frame, text=no_check, font=("Arial", 40), anchor="center", justify="left")
+    no2_label.pack(fill=tk.BOTH, expand=True)
+    no2_label.configure(background="white")
     #room1 frame###############################
     # Merge cells in the device frame and add text
     label = ttk.Label(room1_frame, text="HOẶC CHÍ TRUNG - NGUYỄN GIA HƯNG\n ELECTRONIC DEVICES CONTROL SYSTEM USING HAND GESTURE RECOGNITION\nHo Chi Minh City University of Technology and Education", font=("Arial", 8), anchor="center", justify="center")
@@ -738,6 +748,8 @@ def mainx(queue):
             mqtt_client.publish("trxyzng_r_status", "ron", qos=2, retain=True)
             room1_frame.tkraise()
             choice_frame.tkraise()
+            global rasp_status
+            rasp_status = 1
         else:
             print("Connection failed")
 
@@ -746,11 +758,15 @@ def mainx(queue):
         print("Atempt to reconnect................")
         no1_frame.tkraise()
         no2_frame.tkraise()
+        global rasp_status
+        rasp_status = 0
 
     def on_message(client, userdata, message):
         global received_message
         global prev_device_status
         global device_status
+        global esp_status
+        global rasp_status
         msg = str(message.payload.decode("utf-8"))
         if len(msg) == 8:
             #received_message = eval(msg)
@@ -846,12 +862,16 @@ def mainx(queue):
                     room2_cbbox_2_4.set(prev_hand_gesture[7])
                     change_hand(room2_cbbox_2_4, room2_img_2_4)              
 
-            elif msg == "on" or msg == "ron":
-                choice_frame.tkraise()
-                room1_frame.tkraise()
+            elif msg == "on":
+                # choice_frame.tkraise()
+                # room1_frame.tkraise()
+                esp_status = 1
             elif msg == "off":
-                no1_frame.tkraise()
-                no2_frame.tkraise()                
+                # no1_frame.tkraise()
+                # no2_frame.tkraise()
+                esp_status = 0
+            elif msg == "ron":
+                rasp_status = 1                
 
     def change_hand(ccbox, img):
         image_path = f"img/no_use.png"
@@ -894,14 +914,10 @@ def mainx(queue):
     def connect_to_mqtt():
         broker_address = "broker.hivemq.com"         #address of cloud mqtt server 
         port = 1883                                  #port to connect to mqtt server
-        user = "test"                                #user name to connect to server
-        password = "test"                            #password to connect to server
-        topic = "rasp4_to_esp32"                               #main topic
-        client = mqtt.Client(client_id="hoacchitrung_nguyengiahung_37", clean_session=False, userdata=None, protocol=mqtt.MQTTv311, transport="tcp") #create new client
-        client.username_pw_set(user,password)     #user and password for connect
+        client = mqtt.Client(client_id="hoacchitrung_nguyengiahung_computer", clean_session=False, userdata=None, protocol=mqtt.MQTTv311, transport="tcp") #create new client
         print("Connecting to broker...")          #print to console
         client.will_set("trxyzng_r_status", "roff", 2, True)
-        client.connect(broker_address, port, 2)   #connect to broker with keep alive time = 5s
+        client.connect(broker_address, port, 5)   #connect to broker with keep alive time = 5s
         client.on_connect = on_connect
         client.on_disconnect = on_disconnect
         client.subscribe("esp32_to_rasp4", qos=2)
@@ -913,6 +929,25 @@ def mainx(queue):
     
 
     mqtt_client = connect_to_mqtt()    
+
+    def device_disconnected():
+        global rasp_status
+        global esp_status
+        global no_check
+        if rasp_status == 1 and esp_status == 1:
+            choice_frame.tkraise()
+            room1_frame.tkraise()
+        else:
+            no1_frame.tkraise()
+            no2_frame.tkraise()
+        print(str(rasp_status) + "|" + str(esp_status) + "\n")
+        r = "ONLINE" if rasp_status == 1 else "OFFLINE"
+        e = "ONLINE" if esp_status == 1 else "OFFLINE"
+        no2_label.config(text=f"Main block = {r}\nHost block = {e}") 
+        window.after(1000, device_disconnected)
+    
+
+    device_disconnected()
 
     window.mainloop()
     print('exited.........')
