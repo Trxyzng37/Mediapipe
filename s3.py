@@ -218,18 +218,18 @@ def mainx(queue):
     no_check = "Main block = OFFLINE\nHost block = OFFLINE"
     no1_label = ttk.Label(no1_frame, text="", font=("Arial", 40), anchor="center", justify="center")
     no1_label.pack(fill=tk.BOTH, expand=True)
-    no1_label.configure(background="white")
+    no1_label.configure(background="red")
     no12_label = ttk.Label(no2_frame, text="\nSystem internet connection status\n", font=("Arial", 40), anchor="center", justify="center")
     no12_label.pack(fill=tk.X)
-    no12_label.configure(background="white")
+    no12_label.configure(background="red")
     no2_label = ttk.Label(no2_frame, text=no_check, font=("Arial", 40), anchor="center", justify="left")
     no2_label.pack(fill=tk.BOTH, expand=True)
-    no2_label.configure(background="white")
+    no2_label.configure(background="red")
     #room1 frame###############################
     # Merge cells in the device frame and add text
     label = ttk.Label(room1_frame, text="HOẶC CHÍ TRUNG - NGUYỄN GIA HƯNG\n ELECTRONIC DEVICES CONTROL SYSTEM USING HAND GESTURE RECOGNITION\nHo Chi Minh City University of Technology and Education", font=("Arial", 8), anchor="center", justify="center")
     label.grid(row=0, column=1, ipadx=0, ipady=10, padx=5, pady=5, sticky="nsew", columnspan=4)
-    label.configure(background="white")
+    label.configure(background="red")
 
     def room1_1_1(event):
         selected_value = room1_cbbox_1_1.get()
