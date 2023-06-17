@@ -20,6 +20,7 @@ prev_device_status = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0}
 prev_hand_gesture = [0,0,0,0,0,0,0,0]
 rasp_status = 0
 esp_status = 0
+cur_frame = 0 #0=living 1=bedroom
 
 def mainx(queue):
     cbbox_value = ("No use","Zero","One","Two","Three","Four","Five","Six","Seven","Eight","Nine","Ten","Eleven")
@@ -64,6 +65,8 @@ def mainx(queue):
 
     def switch_to_room1(room1_btn, room2_btn):
         room1_frame.tkraise()
+        global cur_frame
+        cur_frame = 0
         new_room1_btn_img = living_room_on
         room1_btn.config(image=new_room1_btn_img)
         room1_btn.current_image = new_room1_btn_img
@@ -73,6 +76,8 @@ def mainx(queue):
         
     def switch_to_room2(room1_btn, room2_btn):    
         room2_frame.tkraise()
+        global cur_frame
+        cur_frame = 1
         new_room1_btn_img = living_room_off
         room1_btn.config(image=new_room1_btn_img)
         room1_btn.current_image = new_room1_btn_img
@@ -215,7 +220,7 @@ def mainx(queue):
 
 #no status
     no_check = tk.StringVar()
-    no_check = "Main block = OFFLINE\nHost block = OFFLINE"
+    no_check = "Host block = OFFLINE\nClient block = OFFLINE"
     no1_label = ttk.Label(no1_frame, text="", font=("Arial", 40), anchor="center", justify="center")
     no1_label.pack(fill=tk.BOTH, expand=True)
     no1_label.configure(background="red")
@@ -229,7 +234,7 @@ def mainx(queue):
     # Merge cells in the device frame and add text
     label = ttk.Label(room1_frame, text="HOẶC CHÍ TRUNG - NGUYỄN GIA HƯNG\n ELECTRONIC DEVICES CONTROL SYSTEM USING HAND GESTURE RECOGNITION\nHo Chi Minh City University of Technology and Education", font=("Arial", 8), anchor="center", justify="center")
     label.grid(row=0, column=1, ipadx=0, ipady=10, padx=5, pady=5, sticky="nsew", columnspan=4)
-    label.configure(background="red")
+    label.configure(background="white")
 
     def room1_1_1(event):
         selected_value = room1_cbbox_1_1.get()
@@ -935,15 +940,20 @@ def mainx(queue):
         global esp_status
         global no_check
         if rasp_status == 1 and esp_status == 1:
-            choice_frame.tkraise()
-            room1_frame.tkraise()
+            global cur_frame
+            if cur_frame == 0:
+                room1_frame.tkraise()
+                choice_frame.tkraise()
+            else:
+                room2_frame.tkraise()
+                choice_frame.tkraise()
         else:
             no1_frame.tkraise()
             no2_frame.tkraise()
         print(str(rasp_status) + "|" + str(esp_status) + "\n")
         r = "ONLINE" if rasp_status == 1 else "OFFLINE"
         e = "ONLINE" if esp_status == 1 else "OFFLINE"
-        no2_label.config(text=f"Main block = {r}\nHost block = {e}") 
+        no2_label.config(text=f"Host block = {r}\nClient block = {e}") 
         window.after(1000, device_disconnected)
     
 
